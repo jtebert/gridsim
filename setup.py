@@ -14,7 +14,7 @@ setup(
     long_description_content_type='text/markdown',
     python_requires='>=3.6.0',
     author='Julia Ebert',
-    author_email='julia@juliaebert.com,
+    author_email='julia@juliaebert.com',
     url='https://github.com/jtebert/gridsim',
     packages=find_packages(exclude=('tests', 'docs')),
     license=license,
