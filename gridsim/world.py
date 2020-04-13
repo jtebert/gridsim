@@ -2,7 +2,7 @@
 Simulate the grid-based world, full of robots
 """
 
-from typing import Optional, List
+from typing import Optional, List, Tuple
 from .robot import Robot
 
 
@@ -31,7 +31,7 @@ class World:
 
     def _run_controllers(self):
         # Run the robot controllers
-        [robot.controller() for robot in self._robots()]
+        [robot.controller() for robot in self._robots]
 
     def _communicate(self):
         # TODO: Do all pairwise communication between robots
@@ -43,3 +43,6 @@ class World:
         # (possibly) collisions)
         print('"_move" not implemented yet')
         pass
+
+    def get_dimensions(self) -> Tuple[int, int]:
+        return self._grid_width, self._grid_height
