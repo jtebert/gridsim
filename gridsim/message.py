@@ -35,3 +35,13 @@ class Message:
     def get(self) -> Optional[Dict[str, Any]]:
         # Retrieve the message contents
         return self._content
+
+    def __str__(self):
+        if self.is_null:
+            return "NULL message"
+        else:
+            return '{id} -> {type}: {contents}'.format(
+                id=self._tx_id,
+                type=self._rx_type,
+                contents=self._content
+            )

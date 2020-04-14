@@ -10,13 +10,14 @@ from hub_robot import HubRobot
 
 
 def main():
+    x = 50
     num_robots = 2
     robots = []
     for n in range(num_robots):
-        robots.append(TestRobot(19-n, 19-n))
-    hub_robot = HubRobot(25, 25)
+        robots.append(TestRobot(x-1-n, x/2-n))
+    hub_robot = HubRobot(x/2, x/2)
 
-    world = gs.World(50, 50, robots=robots)
+    world = gs.World(x, x, robots=robots)
     viewer = gs.Viewer(world, display_rate=5, show_grid=True)
     world.add_robot(hub_robot)
 

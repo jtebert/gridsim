@@ -44,14 +44,14 @@ class World:
             if not msg.is_null:  # only transmit non-empty messages
                 for rx_r in self._robots:  # receiving robot
                     # Receiver must be target type (and not itself)
-                    if tx_r != rx_r and isinstance(msg._receiver_type, rx_r):
+                    if tx_r != rx_r and isinstance(rx_r, msg._rx_type):
                         dist = tx_r.distance(rx_r.get_pos())
                         if tx_r.comm_criteria(dist) and \
                                 rx_r.comm_criteria(dist):
                             # Receiving robot processes incoming message
                             rx_r.receive_msg(msg, dist)
                             # Tell sender that the message sent successfully
-                            tx_r.received()
+                            # tx_r.msg_received()
 
     # def _run_controllers(self):
     #     # Run the robot controllers

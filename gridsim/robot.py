@@ -19,7 +19,7 @@ class Robot(ABC, pygame.sprite.Sprite):
     def __init__(self, x: int, y: int):
         pygame.sprite.Sprite.__init__(self)  # call Sprite initializer
 
-        self._id = random.getrandbits(32)  # Random 32-bit integer
+        self.id = random.getrandbits(32)  # Random 32-bit integer
         self._x = x
         self._y = y
         self._cell_size = 0  # set in sprite_setup (when added to world)
@@ -101,7 +101,7 @@ class Robot(ABC, pygame.sprite.Sprite):
         return self._tx_message
 
     def set_tx_message(self, msg: Message):
-        self._get_tx_message = msg
+        self._tx_message = msg
 
     def _controller(self):
         # Robot specific controller run at each step
@@ -129,6 +129,11 @@ class Robot(ABC, pygame.sprite.Sprite):
         pass
 
     @abstractmethod
-    def receive_msg(self):
+    def receive_msg(self, msg: Message, dist: float):
         # Robot processing a message that it receives
         pass
+
+    # @abstractmethod
+    # def msg_received(self):
+    #     # Called when a robot successfully sent its message
+    #     pass

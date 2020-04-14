@@ -1,4 +1,4 @@
-from gridsim import Robot
+from gridsim import Robot, Message
 
 
 class HubRobot(Robot):
@@ -10,8 +10,12 @@ class HubRobot(Robot):
         # print('"TestRobot.comm_criteria" not implemented yet')
         return dist < 5
 
-    def receive_msg(self):
-        print('"TestRobot.receive_msg" not implemented yet')
+    def receive_msg(self, msg: Message, dist: float):
+        # print('"HubRobot.receive_msg" not implemented yet')
+        print('HUB:', dist)
+        pass
+
+    def msg_received(self):
         pass
 
     def loop(self):
