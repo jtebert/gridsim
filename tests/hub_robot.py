@@ -1,10 +1,10 @@
 from gridsim import Robot
 
 
-class TestRobot(Robot):
+class HubRobot(Robot):
     def init(self):
         # print('"TestRobot._init" not implemented yet')
-        self.set_color(255, 0, 0)
+        self.set_color(0, 255, 0)
 
     def comm_criteria(self, dist: int) -> bool:
         # print('"TestRobot.comm_criteria" not implemented yet')
@@ -16,8 +16,4 @@ class TestRobot(Robot):
 
     def loop(self):
         # print('"TestRobot.loop" not implemented yet')
-        x, y = self.get_pos()
-        if x == 0:
-            self.move(1, 0)
-        else:
-            self.move(-1, 0)
+        pass
