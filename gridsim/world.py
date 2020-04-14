@@ -14,6 +14,23 @@ class World:
     def __init__(self, width: int, height: int,
                  robots: List[Robot] = [],
                  allow_collisions: bool = True):
+        """
+        Create a World for simulating Robots in a grid world
+
+        Parameters
+        ----------
+        width : int
+            Width of the world (number of cells)
+        height : int
+            Height of the world (number of cells)
+        robots : List[Robot], optional
+            List of Robots to place in the World to start, by default [].
+            Additional robots can be added after initialization with the
+            `add_robot` method.
+        allow_collisions : bool, optional
+            Whether or not to allow Robots to exist in the same grid cell, by
+            default True
+        """
         self._grid_width = width
         self._grid_height = height
         [r.add_to_world(self._grid_width, self._grid_height) for r in robots]
@@ -22,6 +39,10 @@ class World:
         self._tick = 0
 
     def step(self):
+        """
+        Run a single step of the simulation. This moves the robots, manages the
+        clock, and runs the robot controllers.
+        """
         # One tick of the world
         # self._run_controllers()
         # self._communicate()
@@ -31,13 +52,25 @@ class World:
         self._tick += 1
 
     def add_robot(self, robot: Robot):
-        # Add a single robot to the world
-        # robot.add_to_world()
+        """
+        Add a single robot to the World
+
+        Parameters
+        ----------
+        robot : Robot
+            Robot to add to the World
+        """
         self._robots.add(robot)
+        robot.add_to_world(self._grid_width, self._grid_height)
 
     def _communicate(self):
-        # TODO: Do all pairwise communication between robots
+        """
+        Run all pairwise communication of robots from broadcast messages.
 
+        This checks that the receiving robots are of the right type (specified
+        by the Mesage), and that robots are within mutual communication range of
+        each other
+        """
         # (Slow) loop through all robot pairs
         for tx_r in self._robots:  # transmitting robot
             msg = tx_r.get_tx_message()
@@ -64,4 +97,12 @@ class World:
     #     pass
 
     def get_dimensions(self) -> Tuple[int, int]:
+        """
+        Get the dimensions (in grid cells) of the World
+
+        Returns
+        -------
+        Tuple[int, int]
+            (width, height) of the World, in grid cells
+        """
         return self._grid_width, self._grid_height

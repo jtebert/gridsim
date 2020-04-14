@@ -14,8 +14,8 @@ def main():
     num_robots = 2
     robots = []
     for n in range(num_robots):
-        robots.append(TestRobot(x-1-n, x/2-n))
-    hub_robot = HubRobot(x/2, x/2)
+        robots.append(TestRobot(x - 1 - n, x / 2-n))
+    hub_robot = HubRobot(x / 2, x / 2)
 
     world = gs.World(x, x, robots=robots)
     viewer = gs.Viewer(world, display_rate=5, show_grid=True)
