@@ -5,3 +5,4 @@ from .robot import Robot
 from .viewer import Viewer
 from .world import World
 from .message import Message
+from .config_parser import ConfigParser

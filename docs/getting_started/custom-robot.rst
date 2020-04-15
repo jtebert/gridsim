@@ -21,8 +21,8 @@ First, you create a subclass that represents the physical robot system you are r
 
 Second, you create a subclass of your new class for implementing specific algorithms or code on your new robot platform. Here you will implement message handling (:meth:`~.robot.Robot.receive_msg` and optionally :meth:`~.robot.Robot.msg_received`) and onboard code (:meth:`~.robot.Robot.init` and :meth:`~.robot.Robot.loop`).
 
-Below is an example of the structure described above to create a simple robot that bounces around the arena.
+Below is an example of the structure described above to create a simple robot that bounces around the arena. First, we create , a robot with a circular communication radius of 5 grid cells that can move in the cardinal directions to any of four cells surrounding it.
 
-.. literalinclude:: /../examples/test_robot.py
+.. literalinclude:: /../gridsim/grid_robot.py
   :language: Python
   :linenos:

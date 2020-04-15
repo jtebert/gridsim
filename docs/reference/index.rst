@@ -4,8 +4,9 @@ Class Reference
 .. toctree::
     :maxdepth: 1
 
-    logger
-    message
+    world
     robot
     viewer
-    world
+    message
+    config_parser
+    logger

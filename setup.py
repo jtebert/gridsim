@@ -23,7 +23,8 @@ setup(
         # List of dependencies
         "pygame",
         "numpy",
-        "h5py"
+        "h5py",
+        "pyyaml",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

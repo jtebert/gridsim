@@ -14,7 +14,7 @@ class Message:
                  rx_type: Type[Robot] = Robot,  # Default is any robot
                  ):
         """
-        A message sent by robots. Can be either a null (empty) message if not
+        A message sent by robots. Can be either a null (empty) message if no
         arguments are provided to the constructor. Or it contains the sender's
         ID, a dictionary of content, and (optionally) the type of robot that
         receives the message.

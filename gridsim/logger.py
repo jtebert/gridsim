@@ -2,19 +2,58 @@
 For logging data out of the simulator (probably as HDF5, but TBD)
 """
 
-from typing import Optional, Callable, List, Dict
+from typing import Optional, Callable, List, Dict, Union
 import os
+import re
 
 import h5py
 import numpy as np
 
 from .world import World
 from .robot import Robot
+from .config_parser import ConfigParser
 
 
 class Logger:
+    # Allowed parameter datatypes (from configuration) that can be logged
+    PARAM_TYPE = Union[str, int, float, bool, list]
+    # Mapping between Python datatypes and h5py/HDF5 datatypes
+    DATATYPE_MAP = {
+        str: h5py.string_dtype(),  # http://docs.h5py.org/en/stable/strings.html
+        int: 'int64',
+        float: 'float64',
+        bool: np.bool,
+        list: 'float64',
+    }
+
+    @staticmethod
+    def type_str(type_v):
+        return re.findall(r"'(.*?)'", str(type_v))[0]
+
     def __init__(self, world: World, filename: str, trial_num: int,
                  overwrite_trials: Optional[bool] = False):
+        """
+        Create a Logger to save data to an HDF5 file, from a single simulation
+        trial.
+
+        Note that this only creates the Logger with which you can save data. You
+        must use the methods below to actually save anything to the file with
+        the Logger.
+
+        Parameters
+        ----------
+        world : World
+            World whose simulation data you want to save.
+        filename : str
+            Name of the HDF5 file to save data to (``.hdf`` extension). If the
+            file does not exist, it will be created. If it does exist, it will
+            be appended to (with the overwriting caveat specified below)
+        trial_num : int
+            Trial number under which to save the data.
+        overwrite_trials : Optional[bool], optional
+            Whether to overwrite a trial's data if it already exists, by default
+            False
+        """
         self._world = world
         self._filename = filename
         self._trial_num = trial_num
@@ -34,11 +73,12 @@ class Logger:
             if self._overwrite_trials:
                 # Delete previous trial group
                 del self._log_file[self._trial_group_name]
-                print("WARNING: Overwrote trial data")
+                print("WARNING: Overwrote trial {} data"
+                      .format(self._trial_num))
             else:
-                raise OSError('ERROR: Conflicts with existing trial.' +
-                              'Exiting to avoid data overwrite',
-                              filename=self._filename)
+                raise ValueError('Conflicts with existing trial {}. '
+                                 .format(self._trial_num) +
+                                 'Exiting to avoid data overwrite')
         self._log_file.create_group(self._trial_group_name)
 
         # Create the params group, if it doesn't already exist
@@ -67,7 +107,7 @@ class Logger:
         Add an aggregator function that will map from the list of all Robots in
         the world to a 1D array of floats. This will be used for logging the
         state of the World; the output of the aggregator is one row in the
-        HDF5 Dataset named with the `name`.
+        HDF5 Dataset named with the ``name``.
 
         The function reduces the state of the Robots to a single or multiple
         values. It could map to one float per robot (such as a state variable of
@@ -82,14 +122,14 @@ class Logger:
         Notes
         -----
         The width of the aggregator table is set when this function is called,
-        which is determined by the length of the output of `func`. If the length
+        which is determined by the length of the output of ``func``. If the length
         depends on the number of Robots, all Robots should be added to the
-        `World` *before* adding any aggregators to the `Logger`.
+        ``World`` *before* adding any aggregators to the ``Logger``.
 
-        The aggregator `func` will be applied to all robots in the world,
+        The aggregator ``func`` will be applied to all robots in the world,
         regardless of type. However, if you have multiple types of Robots in
-        your `World`, you can make an aggregator that applies to one type by
-        filtering the robots by type within the `func`.
+        your ``World``, you can make an aggregator that applies to one type by
+        filtering the robots by type within the ``func``.
 
         Parameters
         ----------
@@ -119,7 +159,9 @@ class Logger:
 
     def log_state(self):
         """
-        Save the output of all of the aggregator functions.
+        Save the output of all of the aggregator functions. If you have not
+        added any aggregators with :meth:`~gridsim.logger.Logger.log_state`,
+        nothing will be saved by this function.
 
         The runs each previously-added aggregator function and appends the
         result to the respective HDF5 Dataset. It also saves the current time of
@@ -143,7 +185,67 @@ class Logger:
             )
             self._log_file[dset_name][-1:] = agg_vals
 
-    def log_config(self, config):
-        # TODO: Log the parameters in the configuration file
-        print('"log_config" not implemented yet')
-        pass
+    def log_config(self, config: ConfigParser):
+        """
+        Save all of the parameters in the configuration.
+
+        Notes
+        -----
+        Due to HDF5 limitations (and my own laziness), only the following
+        datatypes can be saved in the HDF5 parameters:
+
+        - string
+        - integer
+        - float
+        - boolean
+        - list of integers and/or floats
+
+        Parameters
+        ----------
+        config : ConfigParser
+            Configuration loaded from a YAML file.
+        """
+        params = config.get()
+
+        for name, val in params.items():
+            self.log_param(name, val)
+
+    def log_param(self, name: str, val: PARAM_TYPE):
+        """
+        Save a single parameter value. This is useful for saving fixed
+        parameters that are not part of your configuration file, and therefore
+        not saved with :meth:`~gridsim.logger.Logger.log_config`.
+
+        Parameters
+        ----------
+        name : str
+            Name/key of the parameter value to save
+        val : Any
+            Value of the parameter to save. This can be a
+        """
+        dset_name = os.path.join(self._params_group_name, name)
+        v_type = type(val)
+        if isinstance(val, list):
+            # Check that it's a list of floats or ints
+            all_floats = all(map(
+                lambda v: isinstance(v, int) or isinstance(v, float),
+                val))
+            if not all_floats:
+                # raise ValueError('Can only log lists of ints and floats')
+                print('WARNING: Can only save lists of ints and floats. ' +
+                      'Skipping parameter "{}"'
+                      .format(name))
+                return
+        try:
+            dtype = Logger.DATATYPE_MAP[v_type]
+        except KeyError:
+            # raise ValueError("""Cannot process '{}' data.
+            #  Can only process data of types: {}
+            #     """.format(
+            #     Logger.type_str(v_type),
+            #     list(map(Logger.type_str,
+            #              Logger.DATATYPE_MAP.keys()))))
+            print('WARNING: Cannot save {} data. Skipping parameter "{}"'
+                  .format(Logger.type_str(v_type), name))
+            return
+        self._log_file.create_dataset(dset_name, data=val, dtype=dtype)

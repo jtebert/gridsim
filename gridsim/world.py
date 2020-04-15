@@ -33,7 +33,7 @@ class World:
         """
         self._grid_width = width
         self._grid_height = height
-        [r.add_to_world(self._grid_width, self._grid_height) for r in robots]
+        [r._add_to_world(self._grid_width, self._grid_height) for r in robots]
         self._robots = pygame.sprite.Group(robots)
         self._allow_collisions = allow_collisions
         self._tick = 0
@@ -53,7 +53,8 @@ class World:
 
     def add_robot(self, robot: Robot):
         """
-        Add a single robot to the World
+        Add a single robot to the World. Robots can also be added in bulk (as a
+        list) when the ``World`` is created, using the ``robots`` keyword.
 
         Parameters
         ----------
@@ -61,7 +62,7 @@ class World:
             Robot to add to the World
         """
         self._robots.add(robot)
-        robot.add_to_world(self._grid_width, self._grid_height)
+        robot._add_to_world(self._grid_width, self._grid_height)
 
     def _communicate(self):
         """
@@ -85,16 +86,6 @@ class World:
                             rx_r.receive_msg(msg, dist)
                             # Tell sender that the message was received
                             tx_r.msg_received()
-
-    # def _run_controllers(self):
-    #     # Run the robot controllers
-    #     [robot.controller() for robot in self._robots]
-
-    # def _move(self):
-    #     # TODO: Move all of the robots (requires checking for edges and
-    #     # (possibly) collisions)
-    #     print('"_move" not implemented yet')
-    #     pass
 
     def get_dimensions(self) -> Tuple[int, int]:
         """

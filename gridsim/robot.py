@@ -35,9 +35,8 @@ class Robot(ABC, pygame.sprite.Sprite):
         self._y = y
         self._cell_size = 0  # set in sprite_setup (when added to world)
         self._color = (255, 255, 255)
-        self._move_cmd = (0, 0)
         self._arena_dim = (0, 0)
-        self.tick = 0
+        self._tick = 0
         from .message import Message  # Here to fix circular import
         self._tx_message = Message()  # Start with a null/blank message
 
@@ -46,7 +45,7 @@ class Robot(ABC, pygame.sprite.Sprite):
         # Robot-specific initialization
         self.init()
 
-    def add_to_world(self, arena_width: int, arena_height: int):
+    def _add_to_world(self, arena_width: int, arena_height: int):
         """
         Add a robot to the world by telling it the world's dimensions
 
@@ -81,11 +80,12 @@ class Robot(ABC, pygame.sprite.Sprite):
         (The update() function comes from the Sprite class.)
         """
         self._controller()
-        self._move()
-        # Reset movement command between steps
-        self._move_cmd = (0, 0)
+        # Call the platform-specific movement operation
+        new_pos = self.move()
+        # Actually change the robot's position (or don't) based on collisions
+        self._move(new_pos)
 
-        self.tick += 1
+        self._tick += 1
 
         # Update position for viewer
         if self.is_sprite_setup:
@@ -96,26 +96,7 @@ class Robot(ABC, pygame.sprite.Sprite):
                 (int(self._cell_size/2), int(self._cell_size/2)),  # x, y pos
                 int(self._cell_size/2*.9))  # radius
 
-    def move(self, x: int, y: int):
-        """
-        User-facing move command, essentially sending a request to move in a
-        certain direction/amount. The robot will only make this move if it
-        doesn't violate any movement conditions (such as edge of arena or, if
-        enabled, collisions with other robots)
-
-        Parameters
-        ----------
-        x : int
-            Number of grid cells to move in x direction, relative to current
-            position
-        y : int
-            Number of grid cells to move in y direction, relative to current
-            position
-        """
-        # Move by x, y cells
-        self._move_cmd = (x, y)
-
-    def _move(self):
+    def _move(self, new_pos: Tuple[int, int]):
         """
         Actually (possibly) move the robot, subject to constraints. Robot will
         only be moved if it will stay in the arena.
@@ -123,14 +104,13 @@ class Robot(ABC, pygame.sprite.Sprite):
         Right now there is no collision checking.
         """
         # TODO: Move the robot (possibly dealing with collisions?)
-        tmp_pos = (self._x + self._move_cmd[0], self._y + self._move_cmd[1])
         # Only move if you'll stay in the arena
         # Currently this ignores between-robot collisions
-        if tmp_pos[0] < self._arena_dim[0] and \
-           tmp_pos[1] < self._arena_dim[1] and \
-           tmp_pos[0] >= 0 and tmp_pos[1] >= 0:
-            self._x = tmp_pos[0]
-            self._y = tmp_pos[1]
+        if new_pos[0] < self._arena_dim[0] and \
+           new_pos[1] < self._arena_dim[1] and \
+           new_pos[0] >= 0 and new_pos[1] >= 0:
+            self._x = new_pos[0]
+            self._y = new_pos[1]
 
     def set_color(self, r: int, g: int, b: int):
         """
@@ -167,6 +147,18 @@ class Robot(ABC, pygame.sprite.Sprite):
             (x, y) grid position of the robot, from the top left
         """
         return self._x, self._y
+
+    def get_tick(self) -> int:
+        """
+        Get the current tick of the robot (how many steps since the simulation
+        started).
+
+        Returns
+        -------
+        int
+            Number of ticks since start of simulation
+        """
+        return self._tick
 
     def get_tx_message(self) -> Message:
         """
@@ -214,6 +206,24 @@ class Robot(ABC, pygame.sprite.Sprite):
         # TODO: Move to abstract/subclass to allow customized distance metric?
         # return np.abs(self._x - pos[0]) + np.abs(self._y - pos[1])# Manhattan
         return np.sqrt((self._x - pos[0])**2+(self._y-pos[1])**2)
+
+    @abstractmethod
+    def move(self) -> Tuple[int, int]:
+        """
+        User-facing move command, essentially sending a request to move to a
+        particular cell.
+
+        The robot will only make this move if it doesn't violate any movement
+        conditions (such as edge of arena or, if enabled, collisions with other
+        robots). Therefore, you do NOT need to implement any collision or
+        edge-of-arena detection in this function.
+
+        Returns
+        -------
+        Tuple[int, int]
+            (x, y) grid cell position the robot intends to move to
+        """
+        pass
 
     @abstractmethod
     def init(self):
