@@ -262,7 +262,7 @@ class Robot(ABC, pygame.sprite.Sprite):
         """
         pass
 
-    # @abstractmethod
-    # def msg_received(self):
-    #     # Called when a robot successfully sent its message
-    #     pass
+    @abstractmethod
+    def msg_received(self):
+        # Called when a robot successfully sent its message
+        pass

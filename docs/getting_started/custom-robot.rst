@@ -1,2 +1,28 @@
 Make your own Robot
 ===================
+
+The Gridsim library provides a :mod:`~gridsim.robot.Robot` class that manages underlying behavior and drawing of robots, making it easy for you to quickly implement your own functionality and algorithms.
+
+In fact, the default ``Robot`` class is an abstract class; you must *implement* your own ``Robot`` subclass. There are five abstract ``Robot`` methods that you must implement in your own class. (Inputs and outputs are not shown.)
+
+- :meth:`~robot.Robot.move`: Step-wise movement of the robot on the grid
+- :meth:`~.robot.Robot.comm_criteria`: Distance-based criteria for whether or not another robot is within communication range of this robot.
+- :meth:`~.robot.Robot.receive_msg`: Code that is run when a robot receives a message
+- :meth:`~.robot.Robot.init`: Code that is run once when the robot is created
+- :meth:`~.robot.Robot.loop`: Code that is run in every step of the simulation
+
+It also includes an optional method you may want to implement in your subclass:
+
+- :meth:`~.robot.Robot.msg_received`: Code that is run when a robot's successfully sends a message to another robot.
+
+In general, you will likely want to implement your own robots with an additional *two* layers of subclasses. This allows you to separate the physical robot platform you are representing from the algorithsm/code you are running on that platform.
+
+First, you create a subclass that represents the physical robot system you are representing, such as a `Turtlebot <https://www.turtlebot.com/>`_ or `Kilobot <https://www.k-team.com/mobile-robotics-products/kilobot>`_. This implements abstract methods that are properties of the physical system, such as the communication range (:meth:`~.robot.Robot.comm_criteria`) and movement restrictions (:meth:`~robot.Robot.move`). This is still an abstract class.
+
+Second, you create a subclass of your new class for implementing specific algorithms or code on your new robot platform. Here you will implement message handling (:meth:`~.robot.Robot.receive_msg` and optionally :meth:`~.robot.Robot.msg_received`) and onboard code (:meth:`~.robot.Robot.init` and :meth:`~.robot.Robot.loop`).
+
+Below is an example of the structure described above to create a simple robot that bounces around the arena.
+
+.. literalinclude:: /../examples/test_robot.py
+  :language: Python
+  :linenos:

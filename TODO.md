@@ -18,3 +18,5 @@
 - Figure out how to keep version numbering synchronized
   - In `setup.py` (pip), Git/Github releases, and `docs/conf.py`
   - From looking at Wagtail ([conf.py](https://github.com/wagtail/wagtail/blob/v2.8.1/docs/conf.py) and [wagtail/\_\_init\_\_.py](https://github.com/wagtail/wagtail/blob/v2.8.1/wagtail/__init__.py)), perhaps there is one location that keeps a canonical version and all the other files import that.
+- Abstract movement out of the `Robot` class
+- Add sensing

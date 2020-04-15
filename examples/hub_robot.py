@@ -4,7 +4,7 @@ from gridsim import Robot, Message
 class HubRobot(Robot):
     def init(self):
         # print('"TestRobot._init" not implemented yet')
-        self.set_color(0, 255, 0)
+        self.set_color(255, 0, 255)
 
     def comm_criteria(self, dist: int) -> bool:
         # print('"TestRobot.comm_criteria" not implemented yet')

@@ -83,8 +83,8 @@ class World:
                                 rx_r.comm_criteria(dist):
                             # Receiving robot processes incoming message
                             rx_r.receive_msg(msg, dist)
-                            # Tell sender that the message sent successfully
-                            # tx_r.msg_received()
+                            # Tell sender that the message was received
+                            tx_r.msg_received()
 
     # def _run_controllers(self):
     #     # Run the robot controllers
@@ -106,3 +106,16 @@ class World:
             (width, height) of the World, in grid cells
         """
         return self._grid_width, self._grid_height
+
+    def get_time(self) -> float:
+        """
+        Get the current time of the World. At the moment, that's just the number
+        of ticks (time steps) since the simulation started, since we're in a
+        discrete world.
+
+        Returns
+        -------
+        float
+            Number of ticks (steps) since simulation started
+        """
+        return self._tick
