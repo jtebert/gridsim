@@ -60,7 +60,7 @@ class Robot(ABC, pygame.sprite.Sprite):
         # TODO: In future gets the light pattern as well
         self._arena_dim = (arena_width, arena_height)
 
-    def sprite_setup(self, cell_size):
+    def _sprite_setup(self, cell_size):
         # TODO: Setup sprite (called by viewer) for add_to_world
         self._cell_size = cell_size
         self.image = pygame.Surface([cell_size, cell_size], pygame.SRCALPHA)
