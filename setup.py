@@ -2,9 +2,6 @@ from setuptools import setup, find_packages
 import codecs
 import os.path
 
-# Getting version number without package import:
-# https://packaging.python.org/guides/single-sourcing-package-version/
-
 
 def read(rel_path):
     here = os.path.abspath(os.path.dirname(__file__))
@@ -13,6 +10,8 @@ def read(rel_path):
 
 
 def get_version(rel_path):
+    # Getting version number without package import:
+    # https://packaging.python.org/guides/single-sourcing-package-version/
     for line in read(rel_path).splitlines():
         if line.startswith('__version__'):
             delim = '"' if '"' in line else "'"
@@ -21,7 +20,7 @@ def get_version(rel_path):
         raise RuntimeError("Unable to find version string.")
 
 
-with open('README.md') as f:
+with open('README.rst') as f:
     readme = f.read()
 
 with open('LICENSE') as f:
@@ -29,10 +28,10 @@ with open('LICENSE') as f:
 
 setup(
     name='gridsim',
-    version=get_version("gridsim/__init__.py"),
+    version=get_version(os.path.join("gridsim", "__init__.py")),
     description='Simple grid-based robot simulator',
     long_description=readme,
-    long_description_content_type='text/markdown',
+    long_description_content_type='text/x-rst',
     python_requires='>=3.6',
     author='Julia Ebert',
     author_email='julia@juliaebert.com',

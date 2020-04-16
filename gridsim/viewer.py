@@ -42,7 +42,7 @@ class Viewer:
         self._screen = pygame.display.set_mode(self._window_dim)
 
         # Set up all of the sprites for all of the robots
-        [r._sprite_setup(self._cell_size) for r in self._world._robots]
+        [r._sprite_setup(self._cell_size) for r in self._world.get_robots()]
 
         # Set up background grid
         self._bg = pygame.Surface(self._window_dim)
@@ -69,12 +69,13 @@ class Viewer:
 
         # Draw all the robots
         # Overrides sprite.Group.draw() method (see pygame source code)
-        sprites = self._world._robots.sprites()
+        robots = self._world.get_robots()
+        sprites = robots.sprites()
         surface_blit = self._screen.blit
         for spr in sprites:
             if not spr.is_sprite_setup:
                 spr._sprite_setup(self._cell_size)
-            self._world._robots.spritedict[spr] = \
+            robots.spritedict[spr] = \
                 surface_blit(spr.image, spr.rect)
         self.lostsprites = []
 

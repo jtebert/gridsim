@@ -30,16 +30,18 @@ class Robot(ABC, pygame.sprite.Sprite):
         """
         pygame.sprite.Sprite.__init__(self)  # call Sprite initializer
 
-        self.id = random.getrandbits(32)  # Random 32-bit integer
+        #: Unique ID of the Robot
+        self.id: int = random.getrandbits(32)  # Random 32-bit integer
         self._x = x
         self._y = y
-        self._cell_size = 0  # set in sprite_setup (when added to world)
+        self._cell_size = 0.  # set in sprite_setup (when added to world)
         self._color = (255, 255, 255)
         self._arena_dim = (0, 0)
         self._tick = 0
         from .message import Message  # Here to fix circular import
         self._tx_message = Message()  # Start with a null/blank message
 
+        self._is_in_world = False
         self.is_sprite_setup = False
 
         # Robot-specific initialization
@@ -59,14 +61,15 @@ class Robot(ABC, pygame.sprite.Sprite):
         # Tell the robot the size of the world
         # TODO: In future gets the light pattern as well
         self._arena_dim = (arena_width, arena_height)
+        self._is_in_world = True
 
-    def _sprite_setup(self, cell_size: int):
+    def _sprite_setup(self, cell_size: float):
         """
         Set up the Sprite image/rectangle, called if a Viewer is being used.
 
         Parameters
         ----------
-        cell_size : int
+        cell_size : float
             Side length of square cells in pixels, for determining size to draw
             the Robot.
         """
@@ -167,6 +170,28 @@ class Robot(ABC, pygame.sprite.Sprite):
             Number of ticks since start of simulation
         """
         return self._tick
+
+    def get_world_dim(self) -> Tuple[int, int]:
+        """
+        Get the dimensions of the World that this Robot is in, so it can plan to
+        avoid hitting the boundaries.
+
+        Returns
+        -------
+        Tuple[int, int]
+            (width, height) dimensions of the world, in grid cells
+
+        Raises
+        ------
+        ValueError
+            Cannot get dimensions if Robot is not in a World. Add it during
+            creation of a World or with :meth:`~gridsim.world.World.add_robot`.
+        """
+        if self._is_in_world:
+            return self._arena_dim
+        else:
+            raise ValueError("Cannot get dimensions because " +
+                             "Robot is not in a World.")
 
     def get_tx_message(self) -> Message:
         """
@@ -280,7 +305,12 @@ class Robot(ABC, pygame.sprite.Sprite):
         """
         pass
 
-    @abstractmethod
     def msg_received(self):
-        # Called when a robot successfully sent its message
+        """
+        This is called when a robot successfully sent its message (i.e., when
+        another robot received its message.)
+
+        By default, this does nothing. You can override it in your robot class
+        to execute some operation or set a flag when a message is sent.
+        """
         pass

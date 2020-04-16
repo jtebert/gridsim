@@ -156,7 +156,7 @@ class Logger:
         self._aggregators[name] = func
 
         # Do a test run of the aggregator to get the length of the output
-        test_output = func(self._world._robots.sprites())
+        test_output = func(self._world.get_robots().sprites())
         out_size = test_output.size
         # Should be 1D array (size is a single integer)
         if not isinstance(out_size, int):
@@ -187,7 +187,7 @@ class Logger:
         self._log_file[self._time_dset_name][-1:] = time
 
         # Add the output of each aggregator function
-        robots = self._world._robots.sprites()
+        robots = self._world.get_robots().sprites()
         for name, func in self._aggregators.items():
             agg_vals = func(robots)
             dset_name = os.path.join(self._trial_group_name, name)

@@ -110,3 +110,14 @@ class World:
             Number of ticks (steps) since simulation started
         """
         return self._tick
+
+    def get_robots(self) -> pygame.sprite.Group:
+        """
+        Get a list of all the robots in the World
+
+        Returns
+        -------
+        pygame.sprite.Group
+            All Robots currently in the World
+        """
+        return self._robots

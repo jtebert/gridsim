@@ -1,7 +1,3 @@
-"""
-An experiment as a test
-"""
-
 from typing import List
 import argparse
 
