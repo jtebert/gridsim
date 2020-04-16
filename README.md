@@ -1,5 +1,10 @@
 # Gridsim
 
+[![Build Status](https://travis-ci.com/jtebert/gridsim.svg?branch=master)](https://travis-ci.com/jtebert/gridsim)
+[![Documentation Status](https://readthedocs.org/projects/pip/badge/?version=stable)](http://pip.pypa.io/en/stable/?badge=stable)
+[![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/jtebert/gridsim?include_prereleases&sort=semver)](https://github.com/jtebert/gridsim/releases)
+
+
 *Simple grid-based robot simulator*
 
 **[Documentation](https://gridsim.readthedocs.io/)**

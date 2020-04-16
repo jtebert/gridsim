@@ -14,6 +14,9 @@ deploy:
   # on:
   #   tags: true
 
+# command to run tests
+script: pytest
+
 # Instructions for PyPi setup come from here:
 # https://docs.travis-ci.com/user/deployment/pypi/
 # (Had to first system travis package with `sudo gem install travis`)
