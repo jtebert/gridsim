@@ -11,4 +11,4 @@ from gridsim.utils import get_version
 
 # Canonical source for version number
 # major.minor.patch
-VERSION = (0, 1, 1)
+VERSION = (0, 1, 2)
