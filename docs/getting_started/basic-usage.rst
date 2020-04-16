@@ -1,3 +1,5 @@
+.. _basic-usage:
+
 Basic Usage
 ===========
 
@@ -5,6 +7,8 @@ This will walk you through setting up your first robot and complete simulation.
 
 .. contents:: On this page
   :local:
+
+TODO: I'm still working on documenting the usage
 
 Creating a simple robot
 -----------------------
