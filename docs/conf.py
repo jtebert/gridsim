@@ -10,6 +10,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+from gridsim import get_version
 import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
@@ -22,7 +23,7 @@ copyright = '2020, Julia Ebert'
 author = 'Julia Ebert'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1'
+release = get_version()
 
 
 # -- General configuration ---------------------------------------------------

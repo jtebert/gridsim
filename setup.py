@@ -1,4 +1,5 @@
 from setuptools import setup, find_packages
+from gridsim import get_version
 
 with open('README.md') as f:
     readme = f.read()
@@ -8,7 +9,7 @@ with open('LICENSE') as f:
 
 setup(
     name='gridsim',
-    version='0.1.1',
+    version=get_version(),
     description='Simple grid-based robot simulator',
     long_description=readme,
     long_description_content_type='text/markdown',

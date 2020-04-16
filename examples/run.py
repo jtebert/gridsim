@@ -60,12 +60,14 @@ def main(config_file: str):
 
         robots = []
         for n in range(num_robots):
-            robots.append(RandomRobot(x_pos[n], y_pos[n], comm_range=comm_range))
+            robots.append(RandomRobot(x_pos[n], y_pos[n],
+                                      comm_range=comm_range))
         # Create the World, with the robots in it
         world = gs.World(grid_w, grid_w, robots=robots)
 
         # Create the viewer
-        viewer = gs.Viewer(world, display_rate=5, show_grid=True, window_width=1000)
+        viewer = gs.Viewer(world, display_rate=5,
+                           show_grid=True, window_width=1000)
 
         # Logger
         logger = gs.Logger(world, 'test.h5', trial_num=trial,
