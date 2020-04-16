@@ -1,3 +1,5 @@
+.. _custom-robot:
+
 Make your own Robot
 ===================
 
@@ -21,8 +23,21 @@ First, you create a subclass that represents the physical robot system you are r
 
 Second, you create a subclass of your new class for implementing specific algorithms or code on your new robot platform. Here you will implement message handling (:meth:`~.robot.Robot.receive_msg` and optionally :meth:`~.robot.Robot.msg_received`) and onboard code (:meth:`~.robot.Robot.init` and :meth:`~.robot.Robot.loop`).
 
-Below is an example of the structure described above to create a simple robot that bounces around the arena. First, we create , a robot with a circular communication radius of 5 grid cells that can move in the cardinal directions to any of four cells surrounding it.
+Custom robot example
+--------------------
+
+Below is an example of the structure described above to create a simple robot that bounces around the arena.
+
+First, we create , a robot with a circular communication radius of 5 grid cells that can move in the cardinal directions to any of four cells surrounding it. This robot is already provided in the library as :class:`~gridsim.grid_robot.GridRobot`; you need not re-implement this robot platform if it meets your needs.
 
 .. literalinclude:: /../gridsim/grid_robot.py
-  :language: Python
+  :language: Python3
   :linenos:
+
+With our robot platform in place, we can now implement a Robot that implements whatever code we want the robot to run. In this case, it's a simple robot that chooses a random movement every 10 ticks and changes color when it first communicates with other robots.
+
+.. literalinclude:: /../examples/random_robot.py
+  :language: Python3
+  :linenos:
+
+Notice that the abstraction layers mean that you have to write very little additional code to implement a new algorithm for your robot.

@@ -13,10 +13,10 @@
 - Continuous integration
   - Add Travis CI to run test
   - [Travis for PyPi deployment](https://docs.travis-ci.com/user/deployment/pypi/)
-- Add support for configuration
-  - Like Kilosim, but using YAML instead of JSON (and add to setup.py requirements)
 - Figure out how to keep version numbering synchronized
   - In `setup.py` (pip), Git/Github releases, and `docs/conf.py`
   - From looking at Wagtail ([conf.py](https://github.com/wagtail/wagtail/blob/v2.8.1/docs/conf.py) and [wagtail/\_\_init\_\_.py](https://github.com/wagtail/wagtail/blob/v2.8.1/wagtail/__init__.py)), perhaps there is one location that keeps a canonical version and all the other files import that.
 - Abstract movement out of the `Robot` class
-- Add sensing
+- Add sensing + something to sense
+  - Also, do Robots get to know world dimensions so they can avoid hitting the edge?
+- Fix the fact that Viewer/Logger (and maybe other things?) refer to the private `_robots` member.

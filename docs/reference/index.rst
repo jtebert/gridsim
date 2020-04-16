@@ -1,12 +1,14 @@
 Class Reference
 ===============
 
+Each section contains examples
+
 .. toctree::
     :maxdepth: 1
 
     world
     robot
     viewer
-    message
     config_parser
     logger
+    message

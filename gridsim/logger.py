@@ -68,6 +68,18 @@ class Logger:
         self._aggregators: Dict[str, Callable[[List[Robot]], np.ndarray]] = {}
 
     def _set_trial(self):
+        """
+        Set up the logging file for saving the trial specified in the
+        constructor. This checks for overwrites and creates the necessary groups
+        and datasets: ''trial_<n>`` group,``time`` dataset, and ``params``
+        group.
+
+        Raises
+        ------
+        ValueError
+            If a group for the trial exists in the log file and overwriting has
+            been disallowed, an error will be raised.
+        """
         # Create group for the trial
         if self._trial_group_name in self._log_file:
             if self._overwrite_trials:
@@ -122,9 +134,9 @@ class Logger:
         Notes
         -----
         The width of the aggregator table is set when this function is called,
-        which is determined by the length of the output of ``func``. If the length
-        depends on the number of Robots, all Robots should be added to the
-        ``World`` *before* adding any aggregators to the ``Logger``.
+        which is determined by the length of the output of ``func``. If the
+        length depends on the number of Robots, all Robots should be added to
+        the ``World`` *before* adding any aggregators to the ``Logger``.
 
         The aggregator ``func`` will be applied to all robots in the world,
         regardless of type. However, if you have multiple types of Robots in
@@ -185,7 +197,7 @@ class Logger:
             )
             self._log_file[dset_name][-1:] = agg_vals
 
-    def log_config(self, config: ConfigParser):
+    def log_config(self, config: ConfigParser, exclude: List[str] = []):
         """
         Save all of the parameters in the configuration.
 
@@ -204,6 +216,11 @@ class Logger:
         ----------
         config : ConfigParser
             Configuration loaded from a YAML file.
+        exclude : List[str], optional
+            Names (keys) of any configuration parameters to exclude from the
+            saved parameters. This can be useful for excluding an array of
+            values that vary by condition, and you want to only include the
+            single value used in this instance.
         """
         params = config.get()
 
@@ -215,6 +232,9 @@ class Logger:
         Save a single parameter value. This is useful for saving fixed
         parameters that are not part of your configuration file, and therefore
         not saved with :meth:`~gridsim.logger.Logger.log_config`.
+
+        This has the same type restrictions for values as
+        :meth:`~gridsim.logger.Logger.log_config`.
 
         Parameters
         ----------

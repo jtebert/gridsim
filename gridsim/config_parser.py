@@ -7,8 +7,8 @@ class ConfigParser:
     """
     Class to handle YAML configuration files.
 
-    This can be directly passed to the :meth:`~gridsim.logger.Logger.log_config` to save all
-    configuration values with the trial data.
+    This can be directly passed to the :meth:`~gridsim.logger.Logger.log_config`
+    to save all configuration values with the trial data.
     """
 
     def __init__(self, config_filename: str):

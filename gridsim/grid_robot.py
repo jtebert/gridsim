@@ -59,7 +59,7 @@ class GridRobot(Robot):
     def move(self) -> Tuple[int, int]:
         """
         Determine the cell the Robot will move to, based on the direction set in
-        by `set_motors`.
+        by :meth:`~gridsim.grid_robot.GridRobot.set_motors`.
 
         Returns
         -------

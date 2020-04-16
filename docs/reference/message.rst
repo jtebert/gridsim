@@ -1,5 +1,5 @@
-Message
-=======
+Messages
+========
 
 This provides a basic Message protocol for robot communication. Each message contains the ID of the sender and a dictionary of message contents. The values of the message contents may be any type, so the receiver must know how to process the data.
 
