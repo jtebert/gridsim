@@ -14,16 +14,16 @@ Data is stored by trial, in a hierarchy like a file structure, as shown below. V
     │   ├── params
     │   │   ├── <param_1>
     │   │   ├── <param_2>
-    │   │   ├── ⋯
+    │   │   ├── ⋮
     │   │   └── <param_n>
     │   ├── time
     │   ├── <aggregator_1>
     │   ├── <aggregator_2>
-    │   ├── ⋯
+    │   ├── ⋮
     │   └── <aggregator_n>
     ├── trial_<2>
-    │   └── ⋯
-    ├── ⋯
+    │   └── ⋮
+    ├── ⋮
     └── trial_<n>
 
 All values logged with :meth:`~gridsim.logger.Logger.log_param` and :meth:`~gridsim.logger.Logger.log_config` are saved in ``params``.
