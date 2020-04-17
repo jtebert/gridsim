@@ -1,4 +1,4 @@
-Gridsim
+Gridsim
 =======
 
 .. image:: https://travis-ci.com/jtebert/gridsim.svg?branch=master
