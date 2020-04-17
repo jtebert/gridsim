@@ -1,0 +1,11 @@
+# This is a simple configuration file to demonstrate how the ConfigParser works
+
+name: "Hello, ConfigParser"
+
+# How many robots in the simulation
+num_robots: 5
+# Starting x positions of the robots
+robot_x_pos: [3, 5, 7, 20, 28]
+
+# Width/height of world grid
+grid_width: 50

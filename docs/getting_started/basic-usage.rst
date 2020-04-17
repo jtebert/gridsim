@@ -53,26 +53,45 @@ Use the code below or download :download:`viewer_simulation.py </../examples/vie
 .. literalinclude:: /../examples/viewer_simulation.py
   :language: Python3
   :linenos:
-  :emphasize-lines: 20-21,29-30
+  :emphasize-lines: 20-21,28-29
 
 Notice that adding the Viewer slows down the time to complete the simulation, because the display rate of the Viewer limits the simulation rate. If you want to run lots of simulations, turn off your Viewer.
 
 Using configuration files
 -------------------------
 
-TODO: Coming soon
+Gridsim also provides the :class:`~gridsim.config_parser.ConfigParser` for using YAML configuration files. This simplifies loading parameters and (as described in the next section) saving parameters with simulation results data.
 
-- Show YAML configuration file
-- Loading/using configuration values in your function
+The :class:`~gridsim.config_parser.ConfigParser` is un-opinionated; it doesn't place any restrictions on what your configuration files look like, as long as they're valid YAML files.
+
+Compared to our ``minimal_simulation.py``, we only need one line to create our :class:`~gridsim.config_parser.ConfigParser`, from which we can retrieve any parameter values.
+
+Use the code below or download :download:`config_simulation.py </../examples/config_simulation.py>` and YAML configuration file :download:`simple_config.yml </../examples/simple_config.yml>`.
+
+.. literalinclude:: /../examples/config_simulation.py
+  :language: Python3
+  :linenos:
+  :emphasize-lines: 7-13, 17-18, 20-21
 
 Logging data
 ------------
 
-TODO: Coming soon
+Gridsim has a built-in :class:`~gridsim.logger.Logger`, designed to easily save data from your simulations to HDF5 files. This allows you to store complex data and simulation configurations together in one place. HDF5 files are also easy to read and write in many different programming languages.
 
-- Show logging config, individual parameters (and exclude, and that you can't log all types -- see class documentation)
-- Show add_aggregator + log_state
-- Point to Logger documentation for what the output file looks like and more details about what can be logged/saved
+There are three main ways to save data to your log files:
+
+- Save the parameters in your configuration with :meth:`~gridsim.logger.Logger.log_config`. (Note that not all data types can be saved with ``log_config``. See its documentation for more details.)
+- Save a single parameter (that's not in your configuration file) with :meth:`~gridsim.logger.Logger.log_param`
+- Save the state of your simulation/robots with :meth:`~gridsim.logger.Logger.log_state`. (This requires some setup.)
+
+In order to log the state of the World, you first need to tell the :class:`~gridsim.logger.Logger` *what* you want to save about the :class:`~gridsim.robot.Robot`s with an aggregator function. This is a function that takes in a list of Robots and returns a 1D numpy array. Then, whenever you call :meth:`~gridsim.logger.Logger.log_state`, this function is called and the result is added to your dataset. You can add as many aggregators as you want, each with their own name.
+
+We can extend our ``config_simulation.py`` to show the three types of logging described above. Use the code below or download :download:`logger_simulation.py </../examples/logger_simulation.py>`.
+
+.. literalinclude:: /../examples/logger_simulation.py
+  :language: Python3
+  :linenos:
+  :emphasize-lines: 2-4, 9-18, 41-52, 59-60
 
 Complete example
 ----------------
