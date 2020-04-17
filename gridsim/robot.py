@@ -66,9 +66,13 @@ class Robot(ABC, pygame.sprite.Sprite):
             Representation of the world as an image (for sampling color)
         """
         # Tell the robot the size of the world
-        # TODO: In future gets the light pattern as well
         self._arena_dim = (arena_width, arena_height)
         self._is_in_world = True
+
+        # Robots must start within the World
+        if not self._is_in_bounds():
+            raise ValueError("Robot created outside the " +
+                             "dimensions of the World's grid.")
 
         # Add the World's environment, if it has one
         self._environment = environment
@@ -290,6 +294,11 @@ class Robot(ABC, pygame.sprite.Sprite):
         # TODO: Move to abstract/subclass to allow customized distance metric?
         # return np.abs(self._x - pos[0]) + np.abs(self._y - pos[1])# Manhattan
         return np.sqrt((self._x - pos[0])**2+(self._y-pos[1])**2)
+
+    def _is_in_bounds(self) -> bool:
+        # Check if the Robot is within the world boundaries
+        return 0 <= self._x < self._arena_dim[0] and \
+            0 <= self._y < self._arena_dim[1]
 
     @abstractmethod
     def move(self) -> Tuple[int, int]:

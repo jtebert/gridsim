@@ -64,7 +64,7 @@ def main(config_file: str):
         world.add_environment('ex_env.png')
 
         # Create the viewer
-        viewer = gs.Viewer(world, display_rate=5,
+        viewer = gs.Viewer(world, display_rate=10,
                            show_grid=False, window_width=1000)
 
         # Logger

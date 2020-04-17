@@ -47,10 +47,7 @@ class World:
         Run a single step of the simulation. This moves the robots, manages the
         clock, and runs the robot controllers.
         """
-        # One tick of the world
-        # self._run_controllers()
-        # self._communicate()
-        # self._move()
+
         self._robots.update()
         self._communicate()
         self._tick += 1
