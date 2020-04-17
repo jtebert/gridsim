@@ -24,7 +24,7 @@ To start, we will only need to make a simple robot based on the :class:`~gridsim
 - :meth:`~.robot.Robot.init`: Code that is run once when the robot is created
 - :meth:`~.robot.Robot.loop`: Code that is run in every step of the simulation
 
-Create a file for your robot class. Let's call it ``random_robot.py``. Below is a simple Robot that moves randomly and changes direction every 10 seconds. You can copy this or :download:`directly download random_robot.py </../examples/random_robot.py>`
+Create a file for your robot class. Let's call it ``random_robot.py``. Below is a simple Robot that moves randomly and changes direction every 10 seconds. You can copy this or directly download :download:`random_robot.py </../examples/random_robot.py>`
 
 .. literalinclude:: /../examples/random_robot.py
   :language: Python3
