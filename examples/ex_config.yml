@@ -6,11 +6,11 @@ end_trial: 10
 grid_width: 50  # 50 x 50 grid
 
 num_steps: 100  # Number of steps per trial
-num_robots: 3
+num_robots: 20
 
 # Initial robot positions
-init_x_pos: [10, 20, 30]
-init_y_pos: [10, 20, 40]
+init_x_pos: [5, 20, 30]
+init_y_pos: [5, 20, 40]
 
 # Communication radius
 # comm_range: 3

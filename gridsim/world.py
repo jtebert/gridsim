@@ -5,6 +5,7 @@ Simulate the grid-based world, full of robots
 from typing import Tuple, List
 
 import pygame
+from PIL import Image
 
 from .robot import Robot
 
@@ -38,6 +39,9 @@ class World:
         self._allow_collisions = allow_collisions
         self._tick = 0
 
+        # Environment (image background)
+        self.has_environment = False
+
     def step(self):
         """
         Run a single step of the simulation. This moves the robots, manages the
@@ -63,6 +67,32 @@ class World:
         """
         self._robots.add(robot)
         robot._add_to_world(self._grid_width, self._grid_height)
+
+    def add_environment(self, img_filename: str):
+        """
+        Add an image to the environment for the Robots to sense. This will also
+        be shown by the Viewer.
+
+        Because sensing is cell-based, images will be scaled to the size of the
+        World's grid. If the aspect ratio does not match, images will be
+        stretched. To avoid any surprises from rescaling, we recommend using an
+        image with the same resolution as your grid size. (e.g., if you have a
+        50x50 grid, use a 50px x 50px image.)
+
+        Parameters
+        ----------
+        img_filename : str
+            Filename of the RGB image to use as a background environment. Any
+            transparency (alpha) is ignored by the robot sensing.
+        """
+        # Add an image as an environment
+        self.has_environment = True
+        self._environment = WorldEnvironment(
+            img_filename,
+            (self._grid_width, self._grid_height))
+        # Make sure all the Robots have the environment information
+        [r._add_to_world(self._grid_width, self._grid_height, self._environment)
+         for r in self._robots]
 
     def _communicate(self):
         """
@@ -121,3 +151,68 @@ class World:
             All Robots currently in the World
         """
         return self._robots
+
+
+class WorldEnvironment:
+    """
+    This represent the pattern in the world's environment, represented by an
+    image.
+    """
+
+    def __init__(self, img_filename: str, grid_dim: Tuple[int, int]):
+        """
+        Use the provided image as the background for the world.
+
+        Parameters
+        ----------
+        img_filename : str
+            Filename + path of the image to use as the environment.
+        grid_dim : Tuple[int, int]
+            (width, height) of the World grid
+        """
+        self._img_filename = img_filename
+        self.is_in_viewer = False
+
+        # Get the scaling between image dimensions and grid world dimensions
+        img = Image.open(img_filename).convert('RGB')
+        self._world_dim = grid_dim
+        self._world_img = img.resize(grid_dim, Image.NEAREST)
+        self._world_img.show()
+
+    def get(self, pos: Tuple[int, int]) -> Tuple[int, int, int]:
+        """
+        Get the RGB color in the given (x,y) cell
+
+        Parameters
+        ----------
+        pos : Tuple[int, int]
+            (x, y) grid cell position for which to get the color
+
+        Returns
+        -------
+        Tuple[int, int, int]
+            (red, blue, green) color of the environment in the given cell
+        """
+        # Get color in this grid cell
+        color = self._world_img.getpixel(pos)
+        return color
+
+    def add_to_viewer(self, window_dim: Tuple[int, int]):
+        """
+        When a Viewer is created, this function is called to generate the pygame
+        image for drawing
+
+        Parameters
+        ----------
+        window_dim : Tuple[int, int]
+            (width, height) of the Viewer window, in pixels (for image scaling)
+        """
+        # Add to the viewer for drawing
+        self.is_in_viewer = True
+        # Get the window scaling to create a scaled PyGame image to fit the
+        # display window dimensions
+        # img = pygame.image.load(self._img_filename).convert()
+        raw_str = self._world_img.tobytes("raw", 'RGB')
+        img = pygame.image.fromstring(raw_str, self._world_img.size, 'RGB')
+        img = pygame.transform.scale(img, self._world_dim)
+        self.viewer_img = pygame.transform.scale(img, window_dim)

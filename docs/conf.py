@@ -54,7 +54,8 @@ release = get_version(os.path.join("..", "gridsim", "__init__.py"))
 extensions = ['recommonmark',
               'sphinx.ext.autodoc',
               'sphinx.ext.coverage',
-              'sphinx.ext.napoleon']
+              'sphinx.ext.napoleon',
+              'sphinx.ext.graphviz']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

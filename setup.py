@@ -45,6 +45,7 @@ setup(
         "numpy",
         "h5py",
         "pyyaml",
+        'pillow',
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

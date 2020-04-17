@@ -1,5 +1,6 @@
 from typing import List
 import argparse
+from random import randint
 
 import numpy as np
 
@@ -44,8 +45,6 @@ def main(config_file: str):
     grid_w = config.get('grid_width')
 
     num_robots = config.get('num_robots')
-    x_pos = config.get('init_x_pos')
-    y_pos = config.get('init_y_pos')
     # Use a default communication range if one is not in the configuration
     comm_range = config.get('comm_range', default=6)
     overwrite_trials = config.get('overwrite_trials', default=False)
@@ -56,14 +55,17 @@ def main(config_file: str):
 
         robots = []
         for n in range(num_robots):
-            robots.append(RandomRobot(x_pos[n], y_pos[n],
+            robots.append(RandomRobot(randint(0, grid_w-1),
+                                      randint(0, grid_w-1),
                                       comm_range=comm_range))
         # Create the World, with the robots in it
         world = gs.World(grid_w, grid_w, robots=robots)
+        # Add the image to the World
+        world.add_environment('ex_env.png')
 
         # Create the viewer
         viewer = gs.Viewer(world, display_rate=5,
-                           show_grid=True, window_width=1000)
+                           show_grid=False, window_width=1000)
 
         # Logger
         logger = gs.Logger(world, 'test.h5', trial_num=trial,

@@ -32,7 +32,11 @@ class RandomRobot(GridRobot):
         msg = gs.Message(self.id, {'test': 'hello'})
         self.set_tx_message(msg)
 
+        # Sample the environment at the current location
+        c = self.sample()
+
         # Change color depending on whether messages have been sent or received
         # Robot will be white when it has successfully sent & received a message
-        green = 255 * self._msg_sent
-        self.set_color(255, green, 0)
+        blue = 255 * self._msg_sent
+        # self.set_color(255, green, 0)
+        self.set_color(255-c[0], 255-c[1], blue)

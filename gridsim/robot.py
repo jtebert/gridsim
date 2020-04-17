@@ -1,7 +1,7 @@
 from __future__ import annotations  # For the type checking circular import
 
 from abc import ABC, abstractmethod
-from typing import Tuple, TYPE_CHECKING
+from typing import Tuple, TYPE_CHECKING, Optional
 import random
 import numpy as np
 
@@ -10,6 +10,7 @@ import pygame
 # from .message import Message
 if TYPE_CHECKING:
     from .message import Message
+    from .world import WorldEnvironment
 
 
 class Robot(ABC, pygame.sprite.Sprite):
@@ -44,10 +45,14 @@ class Robot(ABC, pygame.sprite.Sprite):
         self._is_in_world = False
         self.is_sprite_setup = False
 
+        # Set by add_to_world, if world has an environment
+        self._environment: Optional[WorldEnvironment] = None
+
         # Robot-specific initialization
         self.init()
 
-    def _add_to_world(self, arena_width: int, arena_height: int):
+    def _add_to_world(self, arena_width: int, arena_height: int,
+                      environment: Optional[WorldEnvironment] = None):
         """
         Add a robot to the world by telling it the world's dimensions
 
@@ -57,11 +62,49 @@ class Robot(ABC, pygame.sprite.Sprite):
             Grid width of the arena
         arena_height : int
             Grid height of the arena
+        environment: WorldEnvironment
+            Representation of the world as an image (for sampling color)
         """
         # Tell the robot the size of the world
         # TODO: In future gets the light pattern as well
         self._arena_dim = (arena_width, arena_height)
         self._is_in_world = True
+
+        # Add the World's environment, if it has one
+        self._environment = environment
+
+    def sample(self, pos: Optional[Tuple[int, int]] = None) -> \
+            Tuple[int, int, int]:
+        """
+        Sample the RGB environment at the given cell location, or (if no ``pos``
+        given) and the robot's current position.
+
+        This allows you to sample *any* location in the World, but this is
+        **probably cheating**. The robot platform you're modeling likely doesn't
+        have such extensive sensing capabilities. This function is provided so
+        that you can define any custom sensing capabilities (such as within a
+        radius around your robot, or a line of sight sensor).
+
+        Parameters
+        ----------
+        pos : Optional[Tuple[int, int]]
+            (x, y) grid cell position of the World to sample. If not specified,
+            the current robot position is sampled.
+
+        Returns
+        -------
+        Tuple
+            (red, green, blue) color at the given coordinate in the range
+            [0, 255]. If the world does not have an environment set, this will
+            return (0, 0, 0)
+        """
+        if self._environment is not None:
+            if pos is None:
+                return self._environment.get(self.get_pos())
+            else:
+                return self._environment.get(pos)
+        else:
+            return 0, 0, 0
 
     def _sprite_setup(self, cell_size: float):
         """
@@ -90,22 +133,20 @@ class Robot(ABC, pygame.sprite.Sprite):
 
         (The update() function comes from the Sprite class.)
         """
-        self._controller()
+
+        # Update position/color for viewer
+        if self.is_sprite_setup:
+            self.rect.topleft = (self._x*self._cell_size,
+                                 self._y*self._cell_size)
+
         # Call the platform-specific movement operation
         new_pos = self.move()
+        # Run the robot's loop function
+        self._controller()
         # Actually change the robot's position (or don't) based on collisions
         self._move(new_pos)
 
         self._tick += 1
-
-        # Update position for viewer
-        if self.is_sprite_setup:
-            self.rect.topleft = (self._x*self._cell_size,
-                                 self._y*self._cell_size)
-            pygame.draw.circle(
-                self.image, self._color,
-                (int(self._cell_size/2), int(self._cell_size/2)),  # x, y pos
-                int(self._cell_size/2*.9))  # radius
 
     def _move(self, new_pos: Tuple[int, int]):
         """
@@ -147,6 +188,12 @@ class Robot(ABC, pygame.sprite.Sprite):
             self._color = color
         else:
             raise ValueError('RGB values must all be in the range [0, 255]')
+
+        if self.is_sprite_setup:
+            pygame.draw.circle(
+                self.image, self._color,
+                (int(self._cell_size/2), int(self._cell_size/2)),  # x, y pos
+                int(self._cell_size/2*.9))  # radius
 
     def get_pos(self) -> Tuple[int, int]:
         """
@@ -219,12 +266,16 @@ class Robot(ABC, pygame.sprite.Sprite):
 
     def _controller(self):
         # Robot specific controller run at each step
+        # TODO: Possibly add battery life here
         self.loop()
 
     def distance(self, pos: Tuple[int, int]) -> float:
         """
         Get the Euclidean distance (in grid cells) between this robot and the
         specified (x, y) grid cell position.
+
+        If you want to change the distance metric (e.g., use Manhattan distance
+        instead), you can override this method when you extend the Robot class.
 
         Parameters
         ----------
