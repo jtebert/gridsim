@@ -174,7 +174,6 @@ class WorldEnvironment:
         img = Image.open(img_filename).convert('RGB')
         self._world_dim = grid_dim
         self._world_img = img.resize(grid_dim, Image.NEAREST)
-        self._world_img.show()
 
     def get(self, pos: Tuple[int, int]) -> Tuple[int, int, int]:
         """
