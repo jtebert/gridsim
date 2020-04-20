@@ -4,6 +4,15 @@ This is reference material for local development.
 
 If you just want to use the library, you don't need any of this.
 
+### Release checklist
+
+- Verify tests and examples are
+- Check that all documentation is updated
+- Update version number (``__version__`) in `gridsim/__init__.py`
+- Push to master
+- Create release on Github
+  (This will automatically create a new documentation version on Read The Docs and deploy an updated release to PyPi
+
 ### Build Documentation
 
 from the `docs` directory, run:
@@ -21,6 +30,8 @@ open _build/html/index.html
 ### Build the distributable for PyPi
 
 (From the [PyPi tutorial](https://packaging.python.org/tutorials/packaging-projects/))
+
+You shouldn't need to do this manually anymore; this will be handled by Travis CI
 
 Make sure the necessary dependencies are installed.
 
@@ -45,3 +56,4 @@ Upload it to the actual index:
 ```shell
 python3 -m twine upload dist/*
 ```
+
