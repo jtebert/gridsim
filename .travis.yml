@@ -16,7 +16,7 @@ deploy:
   password:
     secure: rWwShYjnM/IZh4/GjEYVEL+/Kmkm2oK7A4m4Clpl5nLaJZSXZg5VpcSaHLQJs7HZKoQTG1EE/7bEYMj3xB17eGVCEVZOFgEnau9yTKMH+Cgt42fniq4aVoBqIhwKV+lCSCzZH1O+l4luI/6DKzPzCw5/pe/PoeuM0VFgN+zXuxYb1KzXw+5MUvssOoVeu37Iv2vbHgD/H9bUmGVoLYgdPU19Q9ad9ipGJ3q2NrNXF0cwO0ZIeSR1/EFKc3w6tdpN80sE+8IG49mPvbprkgNmwmfX0UKVPP2bFjFz6eNb0QbwZ7f/CrQsGZYSb5QPXZviO9t+o6vARONAMZf9uZ/8tyXK2CR3mmQgFP+Re87hhIJafer3VO6xiQ4XyFa70mNofBaBDoceX9Nc5ukol2uoEn+hKVxLgwXPnw5hTQWUXrfQnq9dEHDnNYrX8RYDF6dn5ZZ/f+FN9iqhgVOS/ZPKBUFIvQvHSEYNwHMe2uWRgNrZV5pfBNuJ2pgfrMjio4XInOuLGu1ucVKyyfQsWRRvsm/cnRSLv9dl4ZS807RH/FAGbLM9NEZNrWMnR/ifn844Wgzk9onoGJS53WV9yJ8hA3Dq8znUlHax7yyP2hr8/UGLJ3RjT0zCeqvmOsIb4J3f+ZgNSIsLSba86pNNEvn/UEpOAmN1XtC2JQaUAuxXudo=
   distributions: "sdist bdist_wheel"
-  skip_cleanup: true
+  cleanup: false
   on:
     tags: true
 
@@ -29,7 +29,7 @@ script:
   - python viewer_simulation.py
   - python logger_simulation.py
   - python config_simulation.py
-  - python complete_simulation.py ex_env.png
+  - python complete_simulation.py ex_config.yml
 
 env:
   - HAS_SCREEN=''
