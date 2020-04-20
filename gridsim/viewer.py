@@ -2,6 +2,8 @@
 [Optional] For viewing the simulations, using Pygame
 """
 
+import os
+
 import pygame
 
 from .world import World
@@ -37,9 +39,14 @@ class Viewer:
 
         self._world_dim = world.get_dimensions()
         self._cell_size = window_width / self._world_dim[0]
-        self._window_dim = (window_width, int(self._cell_size * self._world_dim[1]))
+        self._window_dim = (window_width,
+                            int(self._cell_size * self._world_dim[1]))
 
-        self._screen = pygame.display.set_mode(self._window_dim)
+        # This allows setting an environment variable to avoid drawing stuff
+        # when no display is set up (e.g., Travis CI)
+        self._has_screen = bool(os.getenv('HAS_SCREEN', True))
+        if self._has_screen:
+            self._screen = pygame.display.set_mode(self._window_dim)
 
         # Set up all of the sprites for all of the robots
         [r._sprite_setup(self._cell_size) for r in self._world.get_robots()]
@@ -101,28 +108,29 @@ class Viewer:
         """
         Draw all of the robots in the world into the World and its environment.
         """
-        # Set the window title
-        pygame.display.set_caption(
-            'Gridsim (t={})'.format(self._world.get_time()))
+        if self._has_screen:
+            # Set the window title
+            pygame.display.set_caption(
+                'Gridsim (t={})'.format(self._world.get_time()))
 
-        # If the world has a new environment, change the viewer background
-        if self._has_new_environment:
-            self._bg = self._create_bg()
-        # Clear everything by drawing the background
-        self._screen.blit(self._bg, (0, 0))
+            # If the world has a new environment, change the viewer background
+            if self._has_new_environment:
+                self._bg = self._create_bg()
+            # Clear everything by drawing the background
+            self._screen.blit(self._bg, (0, 0))
 
-        # Draw all the robots
-        # Overrides sprite.Group.draw() method (see pygame source code)
-        robots = self._world.get_robots()
-        sprites = robots.sprites()
-        surface_blit = self._screen.blit
-        for spr in sprites:
-            if not spr.is_sprite_setup:
-                spr._sprite_setup(self._cell_size)
-            robots.spritedict[spr] = \
-                surface_blit(spr.image, spr.rect)
-        self.lostsprites = []
+            # Draw all the robots
+            # Overrides sprite.Group.draw() method (see pygame source code)
+            robots = self._world.get_robots()
+            sprites = robots.sprites()
+            surface_blit = self._screen.blit
+            for spr in sprites:
+                if not spr.is_sprite_setup:
+                    spr._sprite_setup(self._cell_size)
+                robots.spritedict[spr] = \
+                    surface_blit(spr.image, spr.rect)
+            self.lostsprites = []
 
-        # Update the display
-        pygame.display.flip()
-        self._clock.tick(self._tick_rate)
+            # Update the display
+            pygame.display.flip()
+            self._clock.tick(self._tick_rate)

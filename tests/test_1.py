@@ -1,4 +1,5 @@
 import pytest
+import gridsim as gs
 
 
 def test_file1_method1():

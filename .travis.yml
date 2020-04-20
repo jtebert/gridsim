@@ -23,7 +23,7 @@ deploy:
 # command to run tests
 script:
   - pytest
-  - python setup.py install develop
+  - python setup.py install
   - cd examples
   - python minimal_simulation.py
   - python viewer_simulation.py
@@ -31,3 +31,5 @@ script:
   - python config_simulation.py
   - python complete_simulation.py ex_env.png
 
+env:
+  - HAS_SCREEN=''
