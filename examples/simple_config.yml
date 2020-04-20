@@ -1,4 +1,5 @@
 # This is a simple configuration file to demonstrate how the ConfigParser works
+# Use with config_simulation.py
 
 name: "Hello, ConfigParser"
 

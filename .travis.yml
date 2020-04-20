@@ -22,8 +22,8 @@ deploy:
 
 # command to run tests
 script:
-  - pytest
   - python setup.py install
+  - pytest
   - cd examples
   - python minimal_simulation.py
   - python viewer_simulation.py

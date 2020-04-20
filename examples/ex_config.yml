@@ -1,3 +1,6 @@
+# This is an example configuration file to go with the example
+# complete_simulation.py
+
 name: 'Gridsim example simulation'
 
 start_trial: 1
