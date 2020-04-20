@@ -33,7 +33,7 @@ def main():
     x_pos = config.get('robot_x_pos')
     for n in range(num_robots):
         robots.append(RandomRobot(x_pos[n],
-                                  grid_width-2*n))
+                                  grid_width/2 - n*2))
 
     # Create a 50 x 50 World with the Robots
     world = gs.World(grid_width, grid_width, robots=robots)

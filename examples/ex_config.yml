@@ -4,6 +4,7 @@ start_trial: 1
 end_trial: 10
 
 grid_width: 50  # 50 x 50 grid
+environment_img: 'ex_env.png'
 
 num_steps: 100  # Number of steps per trial
 num_robots: 20
@@ -18,3 +19,4 @@ init_y_pos: [5, 20, 40]
 # Don't overwrite existing data
 # (Will exit instead of overwriting)
 overwrite_trials: true
+log_filename: 'test.h5'

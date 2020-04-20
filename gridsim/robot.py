@@ -71,8 +71,10 @@ class Robot(ABC, pygame.sprite.Sprite):
 
         # Robots must start within the World
         if not self._is_in_bounds():
-            raise ValueError("Robot created outside the " +
-                             "dimensions of the World's grid.")
+            raise ValueError("Robot created outside the dimensions " +
+                             "of the World's grid at ({}, {}).".format(
+                                 self._x, self._y,
+                             ))
 
         # Add the World's environment, if it has one
         self._environment = environment

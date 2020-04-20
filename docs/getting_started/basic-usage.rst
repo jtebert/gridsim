@@ -36,12 +36,19 @@ A minimal simulation example
 
 To run a simulation, you need to create a couple of robots, place them in a :class:`~gridsim.world.World`. Then you call the :meth:`~gridsim.world.World.step` method to execute you simulation step-by-step. :meth:`~gridsim.world.World.step` will handle running all of the robots' code, as well as communication and movement.
 
-Use the code below or download :download:`minimal_simulation.py </../examples/minimal_simulation.py>`.
+We also want give our Robots something to sense by adding en environment to the World. An environment here is represented with an image. (You'll see what this looks like in the next step.) In each cell, the Robots can sense the color of the cell (i.e., the RGB pixel value) at that location with the :meth:`~gridsim.robot.Robot.sample` method. If you set up the environment with an image whose resolution doesn't match the grid dimensions, it will be rescaled, possibly stretching the image. To avoid any surprises, you should use an image whose resolution matches your grid dimensions (e.g., for a 50 × 50 grid, use a 50px × 50px image).
+
+Use the code below or download :download:`minimal_simulation.py </../examples/minimal_simulation.py>` and the example environment :download:`ex_env.png </../examples/ex_env.png>`.
 
 .. literalinclude:: /../examples/minimal_simulation.py
   :language: Python3
   :linenos:
 
+With these files and ``random_robot.py`` in the same directory, and ``gridsim`` installed, you should be able to run the code with:
+
+.. code-block:: console
+
+  $ python3 minimal_simulation.py
 
 Adding the Viewer
 -----------------
@@ -53,7 +60,7 @@ Use the code below or download :download:`viewer_simulation.py </../examples/vie
 .. literalinclude:: /../examples/viewer_simulation.py
   :language: Python3
   :linenos:
-  :emphasize-lines: 20-21,28-29
+  :emphasize-lines: 22-23, 30-31
 
 Notice that adding the Viewer slows down the time to complete the simulation, because the display rate of the Viewer limits the simulation rate. If you want to run lots of simulations, turn off your Viewer.
 
@@ -97,3 +104,9 @@ Complete example
 ----------------
 
 Most simulations will involve all of these components, and multiple trials. You can download a complete, detailed example here: :download:`complete_simulation.py </../examples/complete_simulation.py>`, as well as a corresponding YAML configuration file: :download:`ex_config.yml </../examples/ex_config.yml>`
+
+Here, the configuration file is used as a command line argument, so it's easy to switch what configuration file you use. Run it like this:
+
+.. code-block:: console
+
+  $ python3 complete_simulation.py ex_config.yml

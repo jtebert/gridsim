@@ -11,11 +11,13 @@ def main():
     # Create a few robots to place in your world
     robots = []
     for n in range(num_robots):
-        robots.append(RandomRobot(grid_width-2*n,
-                                  grid_width-2*n))
+        robots.append(RandomRobot(grid_width/2 - n*2,
+                                  grid_width/2 - n*2))
 
     # Create a 50 x 50 World with the Robots
-    world = gs.World(grid_width, grid_width, robots=robots)
+    world = gs.World(grid_width, grid_width,
+                     robots=robots,
+                     environment="ex_env.png")
 
     # Create a Viewer to display the World
     viewer = gs.Viewer(world)

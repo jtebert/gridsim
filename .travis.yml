@@ -21,5 +21,11 @@ deploy:
     tags: true
 
 # command to run tests
-script: pytest
+script:
+  - pytest
+  - python examples/minimal_simulation.py
+  - python examples/viewer_simulation.py
+  - python examples/logger_simulation.py
+  - python examples/config_simulation.py
+  - python examples/complete_simulation.py examples/ex_env.png
 

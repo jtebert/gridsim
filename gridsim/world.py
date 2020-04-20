@@ -14,6 +14,7 @@ class World:
 
     def __init__(self, width: int, height: int,
                  robots: List[Robot] = [],
+                 environment: str = '',
                  allow_collisions: bool = True):
         """
         Create a World for simulating Robots in a grid world
@@ -28,6 +29,12 @@ class World:
             List of Robots to place in the World to start, by default [].
             Additional robots can be added after initialization with the
             `add_robot` method.
+        environment : str, optional
+            Filename of an image to use for a background in the World. Robots
+            will be able to sense the color of this image. If the environment
+            dimensions do not match the World dimensions, the image will be
+            re-scaled (and possibly stretched). We recommend using an image with
+            the same resolution as your grid size.
         allow_collisions : bool, optional
             Whether or not to allow Robots to exist in the same grid cell, by
             default True
@@ -41,6 +48,8 @@ class World:
 
         # Environment (image background)
         self.has_environment = False
+        if environment:
+            self.add_environment(environment)
 
     def step(self):
         """

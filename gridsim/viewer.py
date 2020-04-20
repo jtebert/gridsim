@@ -9,7 +9,7 @@ from .world import World
 
 class Viewer:
     def __init__(self, world: World, window_width: int = 1080,
-                 display_rate: int = 10, show_grid: bool = True):
+                 display_rate: int = 10, show_grid: bool = False):
         """
         Create a Viewer to display the simulation of a World.
 
@@ -28,8 +28,7 @@ class Viewer:
             robots will move by one cell, so keep this low to be able to
             interpret what's going on.
         show_grid : bool, optional
-            Whether to show the underlying grid in the World, by default True.
-            If false, it's blank.
+            Whether to show the underlying grid in the World, by default False.
         """
         self._world = world
         self._clock = pygame.time.Clock()

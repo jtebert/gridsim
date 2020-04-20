@@ -61,14 +61,15 @@ def main(config_file: str):
         # Create the World, with the robots in it
         world = gs.World(grid_w, grid_w, robots=robots)
         # Add the image to the World
-        world.add_environment('ex_env.png')
+        world.add_environment(config.get('environment_img'))
 
         # Create the viewer
         viewer = gs.Viewer(world, display_rate=10,
                            show_grid=False, window_width=1000)
 
         # Logger
-        logger = gs.Logger(world, 'test.h5', trial_num=trial,
+        log_filename = config.get('log_filename')
+        logger = gs.Logger(world, log_filename, trial_num=trial,
                            overwrite_trials=overwrite_trials)
         logger.add_aggregator('green', green_agg)
         logger.log_config(config)
