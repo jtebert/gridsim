@@ -30,6 +30,7 @@ script:
   - python logger_simulation.py
   - python config_simulation.py
   - python complete_simulation.py ex_config.yml
+  - cd ..
 
 env:
   - HAS_SCREEN=''
