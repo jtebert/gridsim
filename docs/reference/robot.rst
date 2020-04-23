@@ -10,7 +10,7 @@ For details on extending the Robot classes to create your own, see :ref:`custom-
 
 .. autoclass:: gridsim.robot.Robot
    :members:
-   :exclude-members: update
+   :exclude-members: update, get_tx_message, add_to_world
 
 
 .. autoclass:: gridsim.grid_robot.GridRobot

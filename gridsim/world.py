@@ -2,12 +2,12 @@
 Simulate the grid-based world, full of robots
 """
 
-from typing import Tuple, List
+from typing import Tuple, List, Optional, Dict
 
 import pygame
-from PIL import Image
 
 from .robot import Robot
+from .environment import Environment, WorldEnvironment
 
 
 class World:
@@ -41,15 +41,23 @@ class World:
         """
         self._grid_width = width
         self._grid_height = height
-        [r._add_to_world(self._grid_width, self._grid_height) for r in robots]
-        self._robots = pygame.sprite.Group(robots)
+        self._robots = pygame.sprite.Group()
+
         self._allow_collisions = allow_collisions
         self._tick = 0
 
+        # Cells that will be tagged (translucent color overlayed) in the Viewer
+        # Dictionary of {(x, y) cell: (R, G, B) color}
+        # These are set in the tag() method
+        self._tagged_pos: Dict[Tuple[int, int], Tuple[int, int, int]] = {}
+
         # Environment (image background)
+        self._environment: Environment = Environment()
         self.has_environment = False
         if environment:
             self.add_environment(environment)
+
+        [self.add_robot(r) for r in robots]
 
     def step(self):
         """
@@ -72,7 +80,7 @@ class World:
             Robot to add to the World
         """
         self._robots.add(robot)
-        robot._add_to_world(self._grid_width, self._grid_height)
+        robot.add_to_world(self._grid_width, self._grid_height, world=self)
 
     def add_environment(self, img_filename: str):
         """
@@ -97,8 +105,31 @@ class World:
             img_filename,
             (self._grid_width, self._grid_height))
         # Make sure all the Robots have the environment information
-        [r._add_to_world(self._grid_width, self._grid_height, self._environment)
-         for r in self._robots]
+        for r in self._robots:
+            r._environment = self._environment
+
+    def has_new_environment(self):
+        """
+        [For the Viewer]: Does the World have a new Environment since the last
+        time that the World was drawn?
+
+        Returns
+        -------
+        bool
+            Whether the Environment has been used by the Viewer since it was
+            added to the World
+        """
+        return self.has_environment and not self._environment.is_in_viewer
+
+    def get_environment(self) -> Environment:
+        """Get the Environment representation for this World
+
+        Returns
+        -------
+        Environment
+            Representation of the Environment
+        """
+        return self._environment
 
     def _communicate(self):
         """
@@ -158,66 +189,22 @@ class World:
         """
         return self._robots
 
-
-class WorldEnvironment:
-    """
-    This represent the pattern in the world's environment, represented by an
-    image.
-    """
-
-    def __init__(self, img_filename: str, grid_dim: Tuple[int, int]):
+    def tag(self, pos: Tuple[int, int], color: Tuple[int, int, int]):
         """
-        Use the provided image as the background for the world.
-
-        Parameters
-        ----------
-        img_filename : str
-            Filename + path of the image to use as the environment.
-        grid_dim : Tuple[int, int]
-            (width, height) of the World grid
-        """
-        self._img_filename = img_filename
-        self.is_in_viewer = False
-
-        # Get the scaling between image dimensions and grid world dimensions
-        img = Image.open(img_filename).convert('RGB')
-        self._world_dim = grid_dim
-        self._world_img = img.resize(grid_dim, Image.NEAREST)
-
-    def get(self, pos: Tuple[int, int]) -> Tuple[int, int, int]:
-        """
-        Get the RGB color in the given (x,y) cell
+        Tag a cell position in the World with an RGB color to display in the
+        viewer. There will be a semi-transparent overlay with the given color in
+        that cell in the World. This is primarily for use with the Viewer, to
+        visualize what has been sampled in the World.
 
         Parameters
         ----------
         pos : Tuple[int, int]
-            (x, y) grid cell position for which to get the color
-
-        Returns
-        -------
-        Tuple[int, int, int]
-            (red, blue, green) color of the environment in the given cell
+            (x, y) grid cell position to mark
+        color : Tuple[int, int, int]
+            (R, G, B) color to set as the cell's overlay color (each in the
+            range [0, 255])
         """
-        # Get color in this grid cell
-        color = self._world_img.getpixel(pos)
-        return color
-
-    def add_to_viewer(self, window_dim: Tuple[int, int]):
-        """
-        When a Viewer is created, this function is called to generate the pygame
-        image for drawing
-
-        Parameters
-        ----------
-        window_dim : Tuple[int, int]
-            (width, height) of the Viewer window, in pixels (for image scaling)
-        """
-        # Add to the viewer for drawing
-        self.is_in_viewer = True
-        # Get the window scaling to create a scaled PyGame image to fit the
-        # display window dimensions
-        # img = pygame.image.load(self._img_filename).convert()
-        raw_str = self._world_img.tobytes("raw", 'RGB')
-        img = pygame.image.fromstring(raw_str, self._world_img.size, 'RGB')
-        img = pygame.transform.scale(img, self._world_dim)
-        self.viewer_img = pygame.transform.scale(img, window_dim)
+        if all([0 <= c <= 255 for c in color]):
+            self._tagged_pos[pos] = color
+        else:
+            raise ValueError('RGB values must all be in the range [0, 255]')

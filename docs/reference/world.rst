@@ -8,3 +8,4 @@ Once the World is created and you have added your robots, you will likely only n
 
 .. autoclass:: gridsim.world.World
    :members:
+   :exclude-members: has_new_environment, get_environment

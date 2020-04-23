@@ -29,6 +29,10 @@ class ConfigParser:
         Get a parameter value from the configuration, or get a dictionary of the
         parameters if no parameter name (key) is specified.
 
+        Note that if no default is specified and the key is *not* found in the
+        configuration file, this will return ``None`` instead of rasing an
+        exception.
+
         Parameters
         ----------
         key : Optional[str], optional

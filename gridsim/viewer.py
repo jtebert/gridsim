@@ -51,62 +51,49 @@ class Viewer:
         # Set up all of the sprites for all of the robots
         [r._sprite_setup(self._cell_size) for r in self._world.get_robots()]
 
-        self._bg = self._create_bg()
+        # self._bg = self._create_bg()
 
-    def _has_new_environment(self) -> bool:
+    def _update_bg(self):
         """
-        Check of the World's environment has changed.
-
-        Returns
-        -------
-        bool
-            Whether the World's environment has changed (or one has been added)
+        Draw a background image for the Viewer (with the World's environment,
+        possibly with a grid) onto the Screen
         """
-        return self._world.has_environment and \
-            not self._world._environment.is_in_viewer
+        if self._world.has_new_environment():
+            self._world.get_environment().add_to_viewer(self._window_dim)
+            bg = self._world.get_environment().get_viewer_img().copy()
 
-    def _create_bg(self) -> pygame.Surface:
-        """
-        Create a background image for the Viewer, with the World's environment
-        (if it has one) and possibly with a grid
+            # Set up background grid
+            if self._show_grid:
+                for col in range(1, self._world_dim[0]):
+                    x = col * self._cell_size
+                    pygame.draw.lines(bg, (50, 50, 50), False,
+                                      [(x, 0),
+                                       (x, self._window_dim[1])],
+                                      1)
+                for row in range(1, self._world_dim[1]):
+                    y = row * self._cell_size
+                    pygame.draw.lines(bg, (50, 50, 50,), False,
+                                      [(0, y),
+                                       (self._window_dim[0], y)],
+                                      1)
+            self._bg = bg
 
-        Returns
-        -------
-        pygame.Surface
-            Pygame image (surface) to use as a the Viewer background
-        """
-        if self._has_new_environment:
-            self._world._environment.add_to_viewer(self._window_dim)
-            bg_img = self._world._environment.viewer_img
-        else:
-            bg_img = None
-
-        # Use background image or solid color
-        if bg_img is None:
-            bg = pygame.Surface(self._window_dim)
-            bg.fill((20, 20, 20))
-        else:
-            bg = bg_img
-
-        # Set up background grid
-        if self._show_grid:
-            for col in range(1, self._world_dim[0]):
-                x = col * self._cell_size
-                pygame.draw.lines(bg, (50, 50, 50), False,
-                                  [(x, 0),
-                                   (x, self._window_dim[1])],
-                                  1)
-            for row in range(1, self._world_dim[1]):
-                y = row * self._cell_size
-                pygame.draw.lines(bg, (50, 50, 50,), False,
-                                  [(0, y),
-                                   (self._window_dim[0], y)],
-                                  1)
-        return bg
+    def _draw_tagged_cells(self):
+        # Draw the tagged cells onto the background
+        for pos, color in self._world._tagged_pos.items():
+            # Draw the color on the position
+            rect = pygame.Surface((self._cell_size, self._cell_size),
+                                  pygame.SRCALPHA)
+            rect.fill(color + (100,))
+            blit_pos = (pos[0] * self._cell_size, pos[1] * self._cell_size)
+            self._screen.blit(rect, blit_pos)
 
     def draw(self):
         """
-        Draw all of the robots in the world into the World and its environment.
+        Draw all of the robots in the World into the World and its environment.
+
+        This will also draw the World's environment (if one is set) and any
+        tagged cells in the World.
         """
         if self._has_screen:
             # Set the window title
@@ -114,10 +101,10 @@ class Viewer:
                 'Gridsim (t={})'.format(self._world.get_time()))
 
             # If the world has a new environment, change the viewer background
-            if self._has_new_environment:
-                self._bg = self._create_bg()
+            self._update_bg()
             # Clear everything by drawing the background
             self._screen.blit(self._bg, (0, 0))
+            self._draw_tagged_cells()
 
             # Draw all the robots
             # Overrides sprite.Group.draw() method (see pygame source code)

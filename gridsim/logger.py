@@ -240,8 +240,8 @@ class Logger:
         ----------
         name : str
             Name/key of the parameter value to save
-        val : Any
-            Value of the parameter to save. This can be a
+        val : Union[str, int, float, bool, list]
+            Value of the parameter to save
         """
         dset_name = os.path.join(self._params_group_name, name)
         v_type = type(val)

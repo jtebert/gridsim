@@ -6,17 +6,16 @@
 
 ## Code
 
-- Do robots get to know world dimensions so they can plan movements to avoid the edge?
-- Write tests
-- Add checks for robots that are initialized outside the world. (Perhaps make it check positions on the first tick step?)
+- Write real tests
 - Add a way to seed random number generator for repeatable trials
-- Add collision detection and prevention
+- Add (optional) collision detection and prevention
+- Perhaps move tagging from Robot.sample() to a new Robot.tag() function?
 
 ## Extras
 
 - Documentation
   - Add class descriptions in .py files
-  - Add environment to basic-usage
 - Figure out a way to make the setup generate executable examples (and connect to basic usage page)
 - Suppress the pygame console text
 - Test description changes on test.pypi.org
+- Add documentation of HAS_SCREEN environment variable

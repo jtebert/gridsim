@@ -44,12 +44,15 @@ class GridRobot(Robot):
         Parameters
         ----------
         dir : int
-            Direction to move, one of UP, DOWN, LEFT, RIGHT, or STAY
+            Direction to move, one of ``GridRobot.UP``, ``GridRobot.DOWN``,
+            ``GridRobot.LEFT``, ``GridRobot.RIGHT``, or ``GridRobot.STAY``
 
         Raises
         ------
         ValueError
-            If given direction is not one of UP, DOWN, LEFT, RIGHT, or STAY
+            If given direction is not one of `GridRobot.UP``,
+            ``GridRobot.DOWN``, ``GridRobot.LEFT``, ``GridRobot.RIGHT``, or
+            ``GridRobot.STAY``
         """
         if dir in GridRobot.DIRS:
             self._move_cmd = dir

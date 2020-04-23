@@ -10,7 +10,7 @@ from .robot import Robot
 
 class Message:
     def __init__(self, tx_id: Optional[int] = None,
-                 content: Optional[Dict[str, Any]] = None,
+                 content: Dict[str, Any] = {},
                  rx_type: Type[Robot] = Robot,  # Default is any robot
                  ):
         """
@@ -23,20 +23,20 @@ class Message:
         ----------
         tx_id : Optional[int], optional
             ID of the sending (transmitting) robot, by default None
-        content : Optional[Dict[str, Any]], optional
-            Dictionary of message keys and values, by default None. Keys must be
-            strings, but values can be of any type (incumbent on receiver for
-            interpretation)
+        content : Dict[str, Any]] optional
+            Dictionary of message keys and values, by default an empty
+            dictionary. Keys must be strings, but values can be of any type
+            (incumbent on receiver to correctly interpret incoming data)
         rx_type : Type[Robot], optional
             Type of the receiving robot, by default Robot (i.e., message will be
             processed by any Robot.)
         """
         # Validate the message contents
-        if tx_id is None and content is None:
+        if tx_id is None and not content:
             # Null message
             self._tx_id = None
             self._rx_type = None
-            self._content = None
+            self._content = {}
             self._is_null = True
         else:
             # Non-null message must include correct receiver type and dictionary
@@ -52,16 +52,30 @@ class Message:
                 self._content = content
                 self._is_null = False
 
-    def get(self) -> Optional[Dict[str, Any]]:
+    def get(self, key: Optional[str] = None) -> Optional[Dict[str, Any]]:
         """
         Get the contents of the message
+
+        Parameters
+        ----------
+        key : Optional[str], optional
+            Name of the parameter to retrieve, by default None. If not
+            specified, a dictionary of all parameters will be returned.
 
         Returns
         -------
         Optional[Dict[str, Any]]
             Dictionary of the message contents
+
+        Raises
+        ------
+        KeyError
+            If a key is provided but is not in the message contents
         """
-        return self._content
+        if key is None:
+            return self._content
+        else:
+            return self._content[key]
 
     def sender(self) -> Optional[int]:
         """

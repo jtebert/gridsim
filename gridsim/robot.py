@@ -3,14 +3,15 @@ from __future__ import annotations  # For the type checking circular import
 from abc import ABC, abstractmethod
 from typing import Tuple, TYPE_CHECKING, Optional
 import random
-import numpy as np
 
+import numpy as np
 import pygame
+
+from .environment import Environment
 
 # from .message import Message
 if TYPE_CHECKING:
     from .message import Message
-    from .world import WorldEnvironment
 
 
 class Robot(ABC, pygame.sprite.Sprite):
@@ -46,13 +47,10 @@ class Robot(ABC, pygame.sprite.Sprite):
         self.is_sprite_setup = False
 
         # Set by add_to_world, if world has an environment
-        self._environment: Optional[WorldEnvironment] = None
+        self._environment: Environment = Environment()
 
-        # Robot-specific initialization
-        self.init()
-
-    def _add_to_world(self, arena_width: int, arena_height: int,
-                      environment: Optional[WorldEnvironment] = None):
+    def add_to_world(self, arena_width: int, arena_height: int,
+                     world=None):
         """
         Add a robot to the world by telling it the world's dimensions
 
@@ -62,8 +60,8 @@ class Robot(ABC, pygame.sprite.Sprite):
             Grid width of the arena
         arena_height : int
             Grid height of the arena
-        environment: WorldEnvironment
-            Representation of the world as an image (for sampling color)
+        world: World
+            World that this Robot is being added to
         """
         # Tell the robot the size of the world
         self._arena_dim = (arena_width, arena_height)
@@ -77,10 +75,16 @@ class Robot(ABC, pygame.sprite.Sprite):
                              ))
 
         # Add the World's environment, if it has one
-        self._environment = environment
+        self._environment = world.get_environment()
+        self._world = world
 
-    def sample(self, pos: Optional[Tuple[int, int]] = None) -> \
-            Tuple[int, int, int]:
+        # Robot-specific initialization
+        # (only called once a robot is placed in the world)
+        self.init()
+
+    def sample(self, pos: Optional[Tuple[int, int]] = None,
+               tag: Optional[Tuple[int, int, int]] = None) \
+            -> Tuple[int, int, int]:
         """
         Sample the RGB environment at the given cell location, or (if no ``pos``
         given) and the robot's current position.
@@ -96,6 +100,12 @@ class Robot(ABC, pygame.sprite.Sprite):
         pos : Optional[Tuple[int, int]]
             (x, y) grid cell position of the World to sample. If not specified,
             the current robot position is sampled.
+        tag: Optional[Tuple[int, int, int]], optional
+            RGB color to tag this position in the World, by default None. If not
+            provided, the cell in the World won't be tagged with any color.
+            Otherwise, there will be a semi-transparent overlay with the given
+            color in that cell in the World. This is primarily for use with the
+            Viewer, to visualize what has been sampled in the World.
 
         Returns
         -------
@@ -104,13 +114,11 @@ class Robot(ABC, pygame.sprite.Sprite):
             [0, 255]. If the world does not have an environment set, this will
             return (0, 0, 0)
         """
-        if self._environment is not None:
-            if pos is None:
-                return self._environment.get(self.get_pos())
-            else:
-                return self._environment.get(pos)
-        else:
-            return 0, 0, 0
+        if pos is None:
+            pos = self.get_pos()
+        if tag is not None:
+            self._world.tag(pos, tag)
+        return self._environment.get(pos)
 
     def _sprite_setup(self, cell_size: float):
         """
@@ -145,10 +153,10 @@ class Robot(ABC, pygame.sprite.Sprite):
             self.rect.topleft = (self._x*self._cell_size,
                                  self._y*self._cell_size)
 
+        # Run the robot's loop function (includes setting move commands)
+        self._controller()
         # Call the platform-specific movement operation
         new_pos = self.move()
-        # Run the robot's loop function
-        self._controller()
         # Actually change the robot's position (or don't) based on collisions
         self._move(new_pos)
 
@@ -248,7 +256,9 @@ class Robot(ABC, pygame.sprite.Sprite):
 
     def get_tx_message(self) -> Message:
         """
-        Get the message queued for transmission (broadcast).
+        Get the message queued for transmission (broadcast). This is likely not
+        needed in the user API; it's used by the World in its communication
+        protocol.
 
         The message is set by the `set_tx_message` function
 
@@ -261,7 +271,10 @@ class Robot(ABC, pygame.sprite.Sprite):
 
     def set_tx_message(self, msg: Message):
         """
-        Set the message that will be continuously broadcast
+        Set the message that will be continuously broadcast. To enable
+        communication, use this function to send a non-empty
+        :class:`~gridsim.message.Message`. (i.e., a message that doesn't use the
+        empty constructor.)
 
         Parameters
         ----------
@@ -323,7 +336,9 @@ class Robot(ABC, pygame.sprite.Sprite):
     @abstractmethod
     def init(self):
         """
-        Robot-specific initialization that will be run when the robot is set up
+        Robot-specific initialization that will be run when the robot is set up.
+
+        This is called when a Robot is added to a :class:gridsim.world.World`.
         """
         pass
 
