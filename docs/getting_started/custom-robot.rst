@@ -1,5 +1,6 @@
 .. _custom-robot:
 
+===================
 Make your own Robot
 ===================
 
@@ -59,7 +60,7 @@ First, you create a subclass that represents the physical robot system you are r
 Second, you create a subclass of your new class for implementing specific algorithms or code on your new robot platform. Here you will implement message handling (:meth:`~.robot.Robot.receive_msg` and optionally :meth:`~.robot.Robot.msg_received`) and onboard code (:meth:`~.robot.Robot.init` and :meth:`~.robot.Robot.loop`). You can have multiple subclasses of your platform to run different code on the same platform, such as ``RandomRobot`` (created below as an example) and ``AnotherAlgorithm``.
 
 Custom robot example
---------------------
+====================
 
 Below is an example of the structure described above to create a simple robot that bounces around the arena.
 

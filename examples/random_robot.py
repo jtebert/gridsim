@@ -20,7 +20,6 @@ class RandomRobot(GridRobot):
         self._msg_sent = True
 
     def loop(self):
-
         # Change direction every DIR_DURATION ticks
         tick = self.get_tick()
         if tick >= self._next_dir_change:

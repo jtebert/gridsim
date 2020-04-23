@@ -6,11 +6,11 @@ from .robot import Robot
 
 
 class GridRobot(Robot):
-    STAY = 0
-    UP = 1
-    DOWN = 2
-    LEFT = 3
-    RIGHT = 4
+    STAY = 'stay'
+    UP = 'up'
+    DOWN = 'down'
+    LEFT = 'left'
+    RIGHT = 'right'
     DIRS = [STAY, UP, DOWN, LEFT, RIGHT]
 
     def __init__(self, x: int, y: int, comm_range: float = 5):
@@ -35,7 +35,7 @@ class GridRobot(Robot):
         # Start with the robot stationary
         self._move_cmd = GridRobot.STAY
 
-    def set_direction(self, dir: int):
+    def set_direction(self, dir: str):
         """
         Helper function to set the direction the robot will move. Note that this
         will persist (the robot will keep moving) until the direction is

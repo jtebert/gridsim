@@ -1,5 +1,6 @@
 .. _basic-usage:
 
+===========
 Basic Usage
 ===========
 
@@ -9,12 +10,12 @@ This will walk you through setting up your first robot and complete simulation.
   :local:
 
 Test using built in examples
-----------------------------
+============================
 
 The examples are in the examples directory of the source code. In the near future, I'll set up a way to run the examples directly when you install the package.
 
 Creating a simple robot
------------------------
+=======================
 
 For more detailed information about developing custom robots, see :ref:`custom-robot`.
 
@@ -32,7 +33,7 @@ Create a file for your robot class. Let's call it ``random_robot.py``. Below is 
 
 
 A minimal simulation example
-----------------------------
+============================
 
 To run a simulation, you need to create a couple of robots, place them in a :class:`~gridsim.world.World`. Then you call the :meth:`~gridsim.world.World.step` method to execute you simulation step-by-step. :meth:`~gridsim.world.World.step` will handle running all of the robots' code, as well as communication and movement.
 
@@ -51,7 +52,7 @@ With these files and ``random_robot.py`` in the same directory, and ``gridsim`` 
   $ python3 minimal_simulation.py
 
 Adding the Viewer
------------------
+=================
 
 With that simple example, you have no way to see what the robots are doing. For that, we add a :class:`~gridsim.viewer.Viewer`. This requires adding only two lines of code to our minimal simulation above.
 
@@ -65,7 +66,7 @@ Use the code below or download :download:`viewer_simulation.py </../examples/vie
 Notice that adding the Viewer slows down the time to complete the simulation, because the display rate of the Viewer limits the simulation rate. If you want to run lots of simulations, turn off your Viewer.
 
 Using configuration files
--------------------------
+=========================
 
 Gridsim also provides the :class:`~gridsim.config_parser.ConfigParser` for using YAML configuration files. This simplifies loading parameters and (as described in the next section) saving parameters with simulation results data.
 
@@ -81,7 +82,7 @@ Use the code below or download :download:`config_simulation.py </../examples/con
   :emphasize-lines: 7-13, 17-18, 20-21
 
 Logging data
-------------
+============
 
 Gridsim has a built-in :class:`~gridsim.logger.Logger`, designed to easily save data from your simulations to HDF5 files. This allows you to store complex data and simulation configurations together in one place. HDF5 files are also easy to read and write in many different programming languages.
 
@@ -101,7 +102,7 @@ We can extend our ``config_simulation.py`` to show the three types of logging de
   :emphasize-lines: 2-4, 9-18, 41-52, 59-60
 
 Complete example
-----------------
+================
 
 Most simulations will involve all of these components, and multiple trials. You can download a complete, detailed example here: :download:`complete_simulation.py </../examples/complete_simulation.py>`, as well as a corresponding YAML configuration file: :download:`ex_config.yml </../examples/ex_config.yml>`
 

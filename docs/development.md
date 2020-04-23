@@ -1,19 +1,20 @@
-## Development
+# Development
 
 This is reference material for local development.
 
 If you just want to use the library, you don't need any of this.
 
-### Release checklist
+## Release checklist
 
 - Verify tests and examples are
 - Check that all documentation is updated
 - Update version number (``__version__`) in `gridsim/__init__.py`
+- Update changelog: move "Unreleased" to new version
 - Push to master
 - Create release on Github
   (This will automatically create a new documentation version on Read The Docs and deploy an updated release to PyPi
 
-### Build Documentation
+## Build Documentation
 
 from the `docs` directory, run:
 
@@ -27,7 +28,7 @@ Then open the documentation:
 open _build/html/index.html
 ```
 
-### Build the distributable for PyPi
+## Build the distributable for PyPi
 
 (From the [PyPi tutorial](https://packaging.python.org/tutorials/packaging-projects/))
 

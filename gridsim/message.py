@@ -37,7 +37,7 @@ class Message:
             self._tx_id = None
             self._rx_type = None
             self._content = None
-            self.is_null = True
+            self._is_null = True
         else:
             # Non-null message must include correct receiver type and dictionary
             if not issubclass(rx_type, Robot):
@@ -50,7 +50,7 @@ class Message:
                 self._tx_id = tx_id
                 self._rx_type = rx_type
                 self._content = content
-                self.is_null = False
+                self._is_null = False
 
     def get(self) -> Optional[Dict[str, Any]]:
         """
@@ -63,7 +63,7 @@ class Message:
         """
         return self._content
 
-    def tx_id(self) -> Optional[int]:
+    def sender(self) -> Optional[int]:
         """
         Get the ID (32-bit integer) of the robot that sent the message
 
@@ -74,6 +74,9 @@ class Message:
         """
         return self._tx_id
 
+    def __bool__(self) -> bool:
+        return not self._is_null
+
     def __str__(self) -> str:
         """Format the message as a human-readable string
 
@@ -82,7 +85,7 @@ class Message:
         str
             Friendly message format (or says it's an empty message)
         """
-        if self.is_null:
+        if self._is_null:
             return "NULL message"
         else:
             return '{id} -> {type}: {contents}'.format(

@@ -111,7 +111,7 @@ class World:
         # (Slow) loop through all robot pairs
         for tx_r in self._robots:  # transmitting robot
             msg = tx_r.get_tx_message()
-            if not msg.is_null:  # only transmit non-empty messages
+            if msg:  # only transmit non-empty messages
                 for rx_r in self._robots:  # receiving robot
                     # Receiver must be target type (and not itself)
                     if tx_r != rx_r and isinstance(rx_r, msg._rx_type):

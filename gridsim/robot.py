@@ -126,7 +126,7 @@ class Robot(ABC, pygame.sprite.Sprite):
         self.image = pygame.Surface([cell_size, cell_size], pygame.SRCALPHA)
         r = int(cell_size/2)
         pygame.draw.circle(self.image, self._color,
-                           (r, r), int(r*.9))
+                           (r, r), r)
 
         self.rect = self.image.get_rect()
         self.rect.topleft = (self._x*cell_size, self._y*cell_size)
@@ -199,7 +199,7 @@ class Robot(ABC, pygame.sprite.Sprite):
             pygame.draw.circle(
                 self.image, self._color,
                 (int(self._cell_size/2), int(self._cell_size/2)),  # x, y pos
-                int(self._cell_size/2*.9))  # radius
+                int(self._cell_size/2))  # radius
 
     def get_pos(self) -> Tuple[int, int]:
         """

@@ -9,7 +9,7 @@ Key features include:
 - Comprehensive documentation and examples
 
 Quick Install
--------------
+=============
 
 .. code-block:: console
 
@@ -18,7 +18,7 @@ Quick Install
 For more information and instructions, check out the `documentation <https://gridsim.readthedocs.io/en/latest/>`_.
 
 Links
------
+=====
 
 **Documentation:** `Read the Docs <https://gridsim.readthedocs.io/en/latest/>`_
 
@@ -27,7 +27,7 @@ Links
 **Source code:** `Github <https://github.com/jtebert/gridsim>`_
 
 Contact
--------
+=======
 
 If you have questions, or if you've done something interesting with this package, send me an email: `julia@juliaebert.com <mailto:julia@juliaebert.com>`_.
 

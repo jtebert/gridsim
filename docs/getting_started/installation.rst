@@ -1,3 +1,4 @@
+============
 Installation
 ============
 
@@ -5,7 +6,7 @@ Installation
     This assumes that you're already familiar with virtual environments and pip.
 
 Virtual Environment Setup
--------------------------
+=========================
 
 Create a Python 3 virtual environment in the current location in subfolder called ``venv``, then set it as the Python source.
 
@@ -17,7 +18,7 @@ Create a Python 3 virtual environment in the current location in subfolder calle
 You can deactivate the virtual environment with ``deactivate``.
 
 Quick Install
--------------
+=============
 
 This package is available through pip, so it's easy to install. With your virual environment active, run:
 

@@ -1,8 +1,9 @@
+===================================
 Gridsim: Grid-world robot simulator
 ===================================
 
 Index
------
+=====
 
 .. toctree::
    :maxdepth: 2
@@ -11,8 +12,9 @@ Index
    getting_started/index
    reference/index
    development
+   changelog
 
 About
------
+=====
 
 .. include:: description.rst
