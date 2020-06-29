@@ -6,13 +6,13 @@ If you just want to use the library, you don't need any of this.
 
 ## Release checklist
 
-- Verify tests and examples are
+- Verify tests and examples work
 - Check that all documentation is updated
 - Update version number (``__version__`) in `gridsim/__init__.py`
 - Update changelog: move "Unreleased" to new version
 - Push to master
 - Create release on Github
-  (This will automatically create a new documentation version on Read The Docs and deploy an updated release to PyPi
+  (This will automatically create a new documentation version on Read The Docs and deploy an updated release to PyPi)
 
 ## Build Documentation
 

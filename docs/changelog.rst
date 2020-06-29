@@ -12,7 +12,7 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
   :local:
   :depth: 1
 
-Unreleased
+`0.3 <https://github.com/jtebert/gridsim/releases/tag/v0.3>`_ (2020-06-29)
 ==========
 
 Added
@@ -41,6 +41,7 @@ Fixed
 -----
 
 - Order of commands run on the robot resulted in incorrect movements (robot-specific :meth:`~gridsim.robot.Robot.move`, then Robot controller/loop function, then collision/environment-aware ``_move`` operation to move the robots which was using a *different* move command)
+- Remove mypy/flake8 from requirements, since they're for local development/linting.
 
 `0.2 <https://github.com/jtebert/gridsim/releases/tag/v0.2>`_ (2020-04-20)
 =============================================================================

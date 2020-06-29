@@ -125,7 +125,8 @@ class WorldEnvironment(Environment):
         ----------
         window_dim : Tuple[int, int]
             (width, height) of the Viewer window, in pixels (for image scaling)
-        """        # Add to the viewer for drawing
+        """
+        # Add to the viewer for drawing
         self.is_in_viewer = True
         # Get the window scaling to create a scaled PyGame image to fit the
         # display window dimensions

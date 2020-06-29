@@ -34,3 +34,12 @@ Within your own code, you can now import the Gridsim library components, such as
 
     # Create an empty World of 100 x 100 grid cells
     my_world = gs.World(100, 100)
+
+Potential Issues
+================
+
+If you get an error when trying to install PyGame (possibly due to Python 3.8) that says ``sdl-config: not found``, you might need to install system dependencies because PyGame uses an older version (1.2) of SDL. For Ubuntu-like systems, you can use the following:
+
+.. code-block:: console
+
+    $ sudo apt install libsdl-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libportmidi-dev
