@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Optional
 
 import pygame
 from PIL import Image
@@ -14,7 +14,7 @@ class Environment:
         # This is a placeholder empty image
         self._viewer_img = pygame.Surface((0, 0))
 
-    def get(self, pos: Tuple[int, int]) -> Tuple[int, int, int]:
+    def get(self, pos: Tuple[int, int]) -> Optional[Tuple[int, int, int]]:
         """
         Get the RGB color in the given (x,y) cell. For a null environment, this
         always returns (0, 0, 0) (black)
@@ -26,8 +26,8 @@ class Environment:
 
         Returns
         -------
-        Tuple[int, int, int]
-            (0, 0, 0,) -- Null environment's color is always considered black
+        Optional[Tuple[int, int, int]]:
+            (0, 0, 0,) -- Null environment's color is always considered black.
         """
         return 0, 0, 0
 
@@ -98,7 +98,7 @@ class WorldEnvironment(Environment):
         # All non-empty environments are True
         return True
 
-    def get(self, pos: Tuple[int, int]) -> Tuple[int, int, int]:
+    def get(self, pos: Tuple[int, int]) -> Optional[Tuple[int, int, int]]:
         """
         Get the RGB color in the given (x,y) cell
 
@@ -109,12 +109,17 @@ class WorldEnvironment(Environment):
 
         Returns
         -------
-        Tuple[int, int, int]
-            (red, blue, green) color of the environment in the given cell
+        Optional[Tuple[int, int, int]]:
+            (red, blue, green) color of the environment in the given cell. If
+            the given position is outside of the arena/image, it will return
+            None.
         """
         # Get color in this grid cell
-        color = self._world_img.getpixel(pos)
-        return color
+        try:
+            color = self._world_img.getpixel(pos)
+            return color
+        except IndexError:
+            return None
 
     def add_to_viewer(self, window_dim: Tuple[int, int]):
         """

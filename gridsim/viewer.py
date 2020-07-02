@@ -84,7 +84,7 @@ class Viewer:
             # Draw the color on the position
             rect = pygame.Surface((self._cell_size, self._cell_size),
                                   pygame.SRCALPHA)
-            rect.fill(color + (100,))
+            rect.fill(color + (64,))
             blit_pos = (pos[0] * self._cell_size, pos[1] * self._cell_size)
             self._screen.blit(rect, blit_pos)
 

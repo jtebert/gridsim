@@ -12,8 +12,27 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
   :local:
   :depth: 1
 
-`0.3 <https://github.com/jtebert/gridsim/releases/tag/v0.3>`_ (2020-06-29)
+Unreleased
 ==========
+
+Added
+-----
+
+- You can now set the contents of a :class:`~gridsim.message.Message` by key, without needing to create a new message.
+
+Changed
+-------
+
+- Trying to have a Robot sample outside of the arena now returns None. Previously, this threw a lower-level error about an image index being out of range.
+- Decrease World tag opacity
+
+TODO
+----
+
+- There's no way to set the whole message contents or clear keys/values in the contents
+
+`0.3 <https://github.com/jtebert/gridsim/releases/tag/v0.3>`_ (2020-06-29)
+==========================================================================
 
 Added
 -----
@@ -44,7 +63,7 @@ Fixed
 - Remove mypy/flake8 from requirements, since they're for local development/linting.
 
 `0.2 <https://github.com/jtebert/gridsim/releases/tag/v0.2>`_ (2020-04-20)
-=============================================================================
+==========================================================================
 
 Added
 -----

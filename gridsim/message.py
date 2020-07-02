@@ -77,6 +77,30 @@ class Message:
         else:
             return self._content[key]
 
+    def set(self, key: str, value: Any) -> None:
+        """
+        In the message contents, set the given key to have the given value.
+        If this is an empty (null) message, this will raise an error. If the
+        key already exists, the existing value will be overwritten
+
+        Parameters
+        ----------
+        key : str
+            Key in the message contents for which to set the value
+        value : Any
+            Value to set for the given key. This will overwrite any existing
+            value, if the key already exists.
+
+        Raises
+        ------
+        ValueError
+            If the message is null/empty, the message contents cannot be set
+        """
+        if not self:
+            raise ValueError("Cannot set the message contents for a null message")
+        else:
+            self._content[key] = value
+
     def sender(self) -> Optional[int]:
         """
         Get the ID (32-bit integer) of the robot that sent the message
@@ -92,7 +116,8 @@ class Message:
         return not self._is_null
 
     def __str__(self) -> str:
-        """Format the message as a human-readable string
+        """
+        Format the message as a human-readable string
 
         Returns
         -------
