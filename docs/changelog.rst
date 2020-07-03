@@ -26,6 +26,12 @@ Changed
 - Trying to have a Robot sample outside of the arena now returns None. Previously, this threw a lower-level error about an image index being out of range.
 - Decrease World tag opacity
 
+Fixed
+-----
+
+- Previously, if you tried to :meth:`~gridsim.robot.Robot.sample` a negative position in the World, it would loop the index around and give you the value of a position on the other side of the environment. Now, this is considered out of bounds and returns ``None``.
+- Improve performance for drawing large number of tags in the world (by converting coordinates to integers).
+
 TODO
 ----
 

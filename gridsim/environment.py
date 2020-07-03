@@ -115,10 +115,10 @@ class WorldEnvironment(Environment):
             None.
         """
         # Get color in this grid cell
-        try:
+        if (0 <= pos[0] < self._world_dim[0]) and (0 <= pos[1] < self._world_dim[1]):
             color = self._world_img.getpixel(pos)
             return color
-        except IndexError:
+        else:
             return None
 
     def add_to_viewer(self, window_dim: Tuple[int, int]):

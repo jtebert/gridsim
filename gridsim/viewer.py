@@ -3,6 +3,7 @@
 """
 
 import os
+import math
 
 import pygame
 
@@ -38,6 +39,7 @@ class Viewer:
         self._show_grid = show_grid
 
         self._world_dim = world.get_dimensions()
+        # Note: there is no guarantee that cell_size is an integer number of pixels
         self._cell_size = window_width / self._world_dim[0]
         self._window_dim = (window_width,
                             int(self._cell_size * self._world_dim[1]))
@@ -82,10 +84,12 @@ class Viewer:
         # Draw the tagged cells onto the background
         for pos, color in self._world._tagged_pos.items():
             # Draw the color on the position
-            rect = pygame.Surface((self._cell_size, self._cell_size),
+            cell_size_px = int(self._cell_size)
+            rect = pygame.Surface((cell_size_px, cell_size_px),
                                   pygame.SRCALPHA)
             rect.fill(color + (64,))
-            blit_pos = (pos[0] * self._cell_size, pos[1] * self._cell_size)
+            blit_pos = (int(pos[0] * self._cell_size),
+                        int(pos[1] * self._cell_size))
             self._screen.blit(rect, blit_pos)
 
     def draw(self):
