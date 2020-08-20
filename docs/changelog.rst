@@ -12,7 +12,7 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
   :local:
   :depth: 1
 
-Unreleased
+`0.4 <https://github.com/jtebert/gridsim/releases/tag/v0.4>`_ (2020-08-20)
 ==========
 
 Added
