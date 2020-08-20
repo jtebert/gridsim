@@ -27,15 +27,16 @@ Added
 Changed
 -------
 
-- Trying to have a Robot sample outside of the arena now returns None. Previously, this threw a lower-level error about an image index being out of range.
-- Decrease World tag opacity
-- Changed to 100-character line limit (from 80).
+- Trying to have a :class:`~gridsim.robot.Robot` sample outside of the arena now returns ``None``. Previously, this threw a lower-level error about an image index being out of range.
+- Decrease :class:`~gridsim.world.World` tag opacity
+- Formatting: Changed to 100-character line limit (from 80).
+- [Under the hood] Renamed ``WorldEnvironment`` to ``ImageEnvironment``
 
 Fixed
 -----
 
 - Previously, if you tried to :meth:`~gridsim.robot.Robot.sample` a negative position in the World, it would loop the index around and give you the value of a position on the other side of the environment. Now, this is considered out of bounds and returns ``None``.
-- Improve performance for drawing large number of tags in the world (by converting coordinates to integers).
+- Improve performance for drawing large number of tags in the :class:`~gridsim.viewer.Viewer` (by converting coordinates to integers).
 - Trying to use the :class:`~gridsim.Viewer.Viewer` without an environment image in the World would cause a crash. Now it doesn't.
 - Return type and documentation for :meth:`~gridsim.robot.Robot.sample` now matches that of the environment (returns None if sampling outside boundaries).
 - Fix broken :func:`~gridsim.utils.get_version` function.
@@ -62,7 +63,7 @@ Changed
 -------
 
 - ``Message.tx_id()`` has been renamed to the (more informative) :meth:`~gridsim.message.Message.sender`.
-- Robot's :meth:`~gridsim.robot.Robot.init` isn't run until the robot is placed in the World. This allows robots to have access to World information (like the arena size) in the ``init()`` method.
+- Robot's :meth:`~gridsim.robot.Robot.init` isn't run until the robot is placed in the World. This allows robots to have access to ``World`` information (like the arena size) in the ``init()`` method.
 - [Under the hood] World's environments are abstracted to have empty and non-empty types, which cleans up code to get rid of reliance on checking for environments being ``None``.
 - [Under the hood] Reduce reliance on cheating and accessing private variables and methods (underscore-prefixed methods/variables)
 
