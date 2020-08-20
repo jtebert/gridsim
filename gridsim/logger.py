@@ -15,6 +15,7 @@ import numpy as np
 from .world import World
 from .robot import Robot
 from .config_parser import ConfigParser
+from .utils import get_version
 
 
 class Logger:
@@ -282,6 +283,7 @@ class Logger:
         - ``release``: System release (``platform.release``) (e.g., kernel version)
         - ``version``: System version (``platform.version``)
         - ``python_version``: Python version (``platform.python_version``) (e.g., '3.8.2')
+        - ``gridsim_version``: Currently installed Gridsim version
         - ``datetime_local``: Local date and time when trial was run
         """
         sys_info = {
@@ -290,6 +292,7 @@ class Logger:
             'release': platform.release(),
             'version': platform.version(),
             'python_version': platform.python_version(),
+            'gridsim_version': get_version(),
             'datetime_local': str(datetime.now()),
         }
 
