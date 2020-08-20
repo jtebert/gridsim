@@ -74,7 +74,6 @@ class Logger:
         # directory = os.path.abspath(os.path.expanduser(self.options.directory))
         full_path = Path(log_filename).expanduser().resolve()
         dir_path = full_path.parent
-        print(full_path)
         if not dir_path.is_dir():
             # Create the path to the save file if it doesn't exist
             dir_path.mkdir(parents=True, exist_ok=True)
@@ -113,7 +112,7 @@ class Logger:
         # http://docs.h5py.org/en/stable/faq.html#appending-data-to-a-dataset
         self._log_file.create_dataset(self._time_dset_name,
                                       shape=(0,),
-                                      maxshape=(None,), dtype='float64')
+                                      maxshape=(None,), dtype='int')
 
     def get_trial(self) -> int:
         """

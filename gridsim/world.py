@@ -7,7 +7,7 @@ from typing import Tuple, List, Optional, Dict
 import pygame
 
 from .robot import Robot
-from .environment import Environment, WorldEnvironment
+from .environment import Environment, ImageEnvironment
 
 
 class World:
@@ -31,8 +31,9 @@ class World:
         environment : str, optional
             Filename of an image to use for a background in the World. Robots will be able to sense
             the color of this image. If the environment dimensions do not match the World
-            dimensions, the image will be re-scaled (and possibly stretched). We recommend using an
-            image with the same resolution as your grid size.
+            dimensions, the image will be re-scaled (and possibly stretched). I recommend using an
+            image with the same resolution as your grid size. This supports using ``~`` to indicate
+            the user home directory.
         allow_collisions : bool, optional
             Whether or not to allow Robots to exist in the same grid cell, by default True.
         """
@@ -85,7 +86,7 @@ class World:
 
         Because sensing is cell-based, images will be scaled to the size of the World's grid. If the
         aspect ratio does not match, images will be stretched. To avoid any surprises from
-        rescaling, we recommend using an image with the same resolution as your grid size. (e.g., if
+        rescaling, I recommend using an image with the same resolution as your grid size. (e.g., if
         you have a 50x50 grid, use a 50px x 50px image.)
 
         Parameters
@@ -95,7 +96,7 @@ class World:
             is ignored by the robot sensing.
         """
         # Add an image as an environment
-        self._environment = WorldEnvironment(
+        self._environment = ImageEnvironment(
             img_filename,
             (self._grid_width, self._grid_height))
         # Make sure all the Robots have the environment information
@@ -160,7 +161,7 @@ class World:
     def get_time(self) -> float:
         """
         Get the current time of the World. At the moment, that's just the number of ticks (time
-        steps) since the simulation started, since we're in a discrete world.
+        steps) since the simulation started, since this is a discrete-time world.
 
         Returns
         -------

@@ -1,4 +1,5 @@
 from typing import Tuple, Optional
+from pathlib import Path
 
 import pygame
 from PIL import Image
@@ -66,7 +67,7 @@ class Environment:
                              " hasn't been added to the viewer")
 
 
-class WorldEnvironment(Environment):
+class ImageEnvironment(Environment):
     """
     This represent the pattern in the world's environment, represented by an image.
     """
@@ -84,10 +85,10 @@ class WorldEnvironment(Environment):
         """
         super().__init__()
 
-        self._img_filename = img_filename
+        self._img_filename = Path(img_filename).expanduser().resolve()
 
         # Get the scaling between image dimensions and grid world dimensions
-        img = Image.open(img_filename).convert('RGB')
+        img = Image.open(self._img_filename).convert('RGB')
         self._world_dim = grid_dim
         self._world_img = img.resize(grid_dim, Image.NEAREST)
 

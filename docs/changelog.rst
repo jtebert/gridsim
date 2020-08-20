@@ -22,6 +22,7 @@ Added
 - When creating a :class:`~gridsim.config_parser.ConfigParser`, you can now choose to show warnings when getting a value that isn't in the config file
 - If a data directory (in the path for a :class:`~gridsim.logger.Logger` filename) does not exist, it will be created.
 - New method :meth:`~gridsim.logger.Logger.log_system_info` allows you to easily save information about the system on which the experiments are being run.
+- Paths for both :class:`~gridsim.logger.Logger` and :class:`~gridsim.environment.ImageEnvironment` (used via :class:`~gridsim.world.World` support using ``~`` to indicate home directory
 
 Changed
 -------
@@ -37,6 +38,8 @@ Fixed
 - Improve performance for drawing large number of tags in the world (by converting coordinates to integers).
 - Trying to use the :class:`~gridsim.Viewer.Viewer` without an environment image in the World would cause a crash. Now it doesn't.
 - Return type and documentation for :meth:`~gridsim.robot.Robot.sample` now matches that of the environment (returns None if sampling outside boundaries).
+- Fix broken :func:`~gridsim.utils.get_version` function.
+- Time in :class:`~gridsim.logger.Logger` is now stored as an integer (since it's ticks). Previously, it was a float.
 
 TODO
 ----
