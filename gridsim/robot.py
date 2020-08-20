@@ -25,10 +25,8 @@ class Robot(ABC, pygame.sprite.Sprite):
 
         Parameters
         ----------
-        x : int
-            Starting x position (grid cell) of the robot
-        y : int
-            Starting y position (grid cell) of the robot
+        x : int Starting x position (grid cell) of the robot y : int Starting y position (grid cell)
+            of the robot
         """
         pygame.sprite.Sprite.__init__(self)  # call Sprite initializer
 
@@ -84,16 +82,15 @@ class Robot(ABC, pygame.sprite.Sprite):
 
     def sample(self, pos: Optional[Tuple[int, int]] = None,
                tag: Optional[Tuple[int, int, int]] = None) \
-            -> Tuple[int, int, int]:
+            -> Optional[Tuple[int, int, int]]:
         """
-        Sample the RGB environment at the given cell location, or (if no ``pos``
-        given) and the robot's current position.
+        Sample the RGB environment at the given cell location, or (if no ``pos`` given) and the
+        robot's current position.
 
-        This allows you to sample *any* location in the World, but this is
-        **probably cheating**. The robot platform you're modeling likely doesn't
-        have such extensive sensing capabilities. This function is provided so
-        that you can define any custom sensing capabilities (such as within a
-        radius around your robot, or a line of sight sensor).
+        This allows you to sample *any* location in the World, but this is **probably cheating**.
+        The robot platform you're modeling likely doesn't have such extensive sensing capabilities.
+        This function is provided so that you can define any custom sensing capabilities (such as
+        within a radius around your robot, or a line of sight sensor).
 
         Parameters
         ----------
@@ -101,18 +98,17 @@ class Robot(ABC, pygame.sprite.Sprite):
             (x, y) grid cell position of the World to sample. If not specified,
             the current robot position is sampled.
         tag: Optional[Tuple[int, int, int]], optional
-            RGB color to tag this position in the World, by default None. If not
-            provided, the cell in the World won't be tagged with any color.
-            Otherwise, there will be a semi-transparent overlay with the given
-            color in that cell in the World. This is primarily for use with the
-            Viewer, to visualize what has been sampled in the World.
+            RGB color to tag this position in the World, by default None. If not provided, the cell
+            in the World won't be tagged with any color. Otherwise, there will be a semi-transparent
+            overlay with the given color in that cell in the World. This is primarily for use with
+            the Viewer, to visualize what has been sampled in the World.
 
         Returns
         -------
-        Tuple
-            (red, green, blue) color at the given coordinate in the range
-            [0, 255]. If the world does not have an environment set, this will
-            return (0, 0, 0)
+        Optional[Tuple[int, int, int]]
+            (red, green, blue) color at the given coordinate in the range [0, 255]. If the world
+            doer not have an environment set, this will return (0, 0, 0). If the given position is
+            outside the boundaries of the World, it will return ``None``.
         """
         if pos is None:
             pos = self.get_pos()
@@ -127,8 +123,7 @@ class Robot(ABC, pygame.sprite.Sprite):
         Parameters
         ----------
         cell_size : float
-            Side length of square cells in pixels, for determining size to draw
-            the Robot.
+            Side length of square cells in pixels, for determining size to draw the Robot.
         """
         self._cell_size = cell_size
         self.image = pygame.Surface([cell_size, cell_size], pygame.SRCALPHA)
@@ -222,8 +217,7 @@ class Robot(ABC, pygame.sprite.Sprite):
 
     def get_tick(self) -> int:
         """
-        Get the current tick of the robot (how many steps since the simulation
-        started).
+        Get the current tick of the robot (how many steps since the simulation started).
 
         Returns
         -------
@@ -234,8 +228,8 @@ class Robot(ABC, pygame.sprite.Sprite):
 
     def get_world_dim(self) -> Tuple[int, int]:
         """
-        Get the dimensions of the World that this Robot is in, so it can plan to
-        avoid hitting the boundaries.
+        Get the dimensions of the World that this Robot is in, so it can plan to avoid hitting the
+        boundaries.
 
         Returns
         -------
@@ -245,8 +239,8 @@ class Robot(ABC, pygame.sprite.Sprite):
         Raises
         ------
         ValueError
-            Cannot get dimensions if Robot is not in a World. Add it during
-            creation of a World or with :meth:`~gridsim.world.World.add_robot`.
+            Cannot get dimensions if Robot is not in a World. Add it during creation of a World or
+            with :meth:`~gridsim.world.World.add_robot`.
         """
         if self._is_in_world:
             return self._arena_dim
@@ -256,9 +250,8 @@ class Robot(ABC, pygame.sprite.Sprite):
 
     def get_tx_message(self) -> Message:
         """
-        Get the message queued for transmission (broadcast). This is likely not
-        needed in the user API; it's used by the World in its communication
-        protocol.
+        Get the message queued for transmission (broadcast). This is likely not needed in the user
+        API; it's used by the World in its communication protocol.
 
         The message is set by the `set_tx_message` function
 
@@ -271,10 +264,9 @@ class Robot(ABC, pygame.sprite.Sprite):
 
     def set_tx_message(self, msg: Message):
         """
-        Set the message that will be continuously broadcast. To enable
-        communication, use this function to send a non-empty
-        :class:`~gridsim.message.Message`. (i.e., a message that doesn't use the
-        empty constructor.)
+        Set the message that will be continuously broadcast. To enable communication, use this
+        function to send a non-empty :class:`~gridsim.message.Message`. (i.e., a message that
+        doesn't use the empty constructor.)
 
         Parameters
         ----------
@@ -290,11 +282,11 @@ class Robot(ABC, pygame.sprite.Sprite):
 
     def distance(self, pos: Tuple[int, int]) -> float:
         """
-        Get the Euclidean distance (in grid cells) between this robot and the
-        specified (x, y) grid cell position.
+        Get the Euclidean distance (in grid cells) between this robot and the specified (x, y) grid
+        cell position.
 
-        If you want to change the distance metric (e.g., use Manhattan distance
-        instead), you can override this method when you extend the Robot class.
+        If you want to change the distance metric (e.g., use Manhattan distance instead), you can
+        override this method when you extend the Robot class.
 
         Parameters
         ----------
@@ -318,13 +310,11 @@ class Robot(ABC, pygame.sprite.Sprite):
     @abstractmethod
     def move(self) -> Tuple[int, int]:
         """
-        User-facing move command, essentially sending a request to move to a
-        particular cell.
+        User-facing move command, essentially sending a request to move to a particular cell.
 
-        The robot will only make this move if it doesn't violate any movement
-        conditions (such as edge of arena or, if enabled, collisions with other
-        robots). Therefore, you do NOT need to implement any collision or
-        edge-of-arena detection in this function.
+        The robot will only make this move if it doesn't violate any movement conditions (such as
+        edge of arena or, if enabled, collisions with other robots). Therefore, you do NOT need to
+        implement any collision or edge-of-arena detection in this function.
 
         Returns
         -------
@@ -369,9 +359,8 @@ class Robot(ABC, pygame.sprite.Sprite):
     @abstractmethod
     def receive_msg(self, msg: Message, dist: float):
         """
-        Function called when the robot receives a message. This allows the
-        specific robot implementation to choose how to process the messages that
-        it receives, asynchronously.
+        Function called when the robot receives a message. This allows the specific robot
+        implementation to choose how to process the messages that it receives, asynchronously.
 
         Parameters
         ----------
@@ -384,10 +373,10 @@ class Robot(ABC, pygame.sprite.Sprite):
 
     def msg_received(self):
         """
-        This is called when a robot successfully sent its message (i.e., when
-        another robot received its message.)
+        This is called when a robot successfully sent its message (i.e., when another robot received
+        its message.)
 
-        By default, this does nothing. You can override it in your robot class
-        to execute some operation or set a flag when a message is sent.
+        By default, this does nothing. You can override it in your robot class to execute some
+        operation or set a flag when a message is sent.
         """
         pass

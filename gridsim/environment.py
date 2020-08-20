@@ -16,8 +16,8 @@ class Environment:
 
     def get(self, pos: Tuple[int, int]) -> Optional[Tuple[int, int, int]]:
         """
-        Get the RGB color in the given (x,y) cell. For a null environment, this
-        always returns (0, 0, 0) (black)
+        Get the RGB color in the given (x,y) cell. For a null environment, this always returns (0,
+        0, 0) (black)
 
         Parameters
         ----------
@@ -33,8 +33,7 @@ class Environment:
 
     def add_to_viewer(self, window_dim: Tuple[int, int]):
         """
-        When a Viewer is created, this function is called to generate the pygame
-        image for drawing.
+        When a Viewer is created, this function is called to generate the pygame image for drawing.
 
         FOR A NULL ENVIRONMENT, a black(ish) image is generated
 
@@ -53,8 +52,7 @@ class Environment:
 
     def get_viewer_img(self) -> pygame.Surface:
         """
-        Get the representation of the Environment in a form that the Viewer can
-        draw (pygame image)
+        Get the representation of the Environment in a form that the Viewer can draw (pygame image)
 
         Returns
         -------
@@ -70,8 +68,7 @@ class Environment:
 
 class WorldEnvironment(Environment):
     """
-    This represent the pattern in the world's environment, represented by an
-    image.
+    This represent the pattern in the world's environment, represented by an image.
     """
 
     def __init__(self, img_filename: str, grid_dim: Tuple[int, int]):
@@ -110,9 +107,8 @@ class WorldEnvironment(Environment):
         Returns
         -------
         Optional[Tuple[int, int, int]]:
-            (red, blue, green) color of the environment in the given cell. If
-            the given position is outside of the arena/image, it will return
-            None.
+            (red, blue, green) color of the environment in the given cell. If the given position is
+            outside of the arena/image, it will return None.
         """
         # Get color in this grid cell
         if (0 <= pos[0] < self._world_dim[0]) and (0 <= pos[1] < self._world_dim[1]):
@@ -123,8 +119,7 @@ class WorldEnvironment(Environment):
 
     def add_to_viewer(self, window_dim: Tuple[int, int]):
         """
-        When a Viewer is created, this function is called to generate the pygame
-        image for drawing
+        When a Viewer is created, this function is called to generate the pygame image for drawing
 
         Parameters
         ----------

@@ -26,18 +26,15 @@ class World:
         height : int
             Height of the world (number of cells)
         robots : List[Robot], optional
-            List of Robots to place in the World to start, by default [].
-            Additional robots can be added after initialization with the
-            `add_robot` method.
+            List of Robots to place in the World to start, by default []. Additional robots can be
+            added after initialization with the :meth:`~gridsim.world.World.add_robot` method.
         environment : str, optional
-            Filename of an image to use for a background in the World. Robots
-            will be able to sense the color of this image. If the environment
-            dimensions do not match the World dimensions, the image will be
-            re-scaled (and possibly stretched). We recommend using an image with
-            the same resolution as your grid size.
+            Filename of an image to use for a background in the World. Robots will be able to sense
+            the color of this image. If the environment dimensions do not match the World
+            dimensions, the image will be re-scaled (and possibly stretched). We recommend using an
+            image with the same resolution as your grid size.
         allow_collisions : bool, optional
-            Whether or not to allow Robots to exist in the same grid cell, by
-            default True
+            Whether or not to allow Robots to exist in the same grid cell, by default True.
         """
         self._grid_width = width
         self._grid_height = height
@@ -53,7 +50,6 @@ class World:
 
         # Environment (image background)
         self._environment: Environment = Environment()
-        self.has_environment = False
         if environment:
             self.add_environment(environment)
 
@@ -61,8 +57,8 @@ class World:
 
     def step(self):
         """
-        Run a single step of the simulation. This moves the robots, manages the
-        clock, and runs the robot controllers.
+        Run a single step of the simulation. This moves the robots, manages the clock, and runs the
+        robot controllers.
         """
 
         self._robots.update()
@@ -71,8 +67,8 @@ class World:
 
     def add_robot(self, robot: Robot):
         """
-        Add a single robot to the World. Robots can also be added in bulk (as a
-        list) when the ``World`` is created, using the ``robots`` keyword.
+        Add a single robot to the World. Robots can also be added in bulk (as a list) when the
+        ``World`` is created, using the ``robots`` keyword.
 
         Parameters
         ----------
@@ -84,23 +80,21 @@ class World:
 
     def add_environment(self, img_filename: str):
         """
-        Add an image to the environment for the Robots to sense. This will also
-        be shown by the Viewer.
+        Add an image to the environment for the Robots to sense. This will also be shown by the
+        Viewer.
 
-        Because sensing is cell-based, images will be scaled to the size of the
-        World's grid. If the aspect ratio does not match, images will be
-        stretched. To avoid any surprises from rescaling, we recommend using an
-        image with the same resolution as your grid size. (e.g., if you have a
-        50x50 grid, use a 50px x 50px image.)
+        Because sensing is cell-based, images will be scaled to the size of the World's grid. If the
+        aspect ratio does not match, images will be stretched. To avoid any surprises from
+        rescaling, we recommend using an image with the same resolution as your grid size. (e.g., if
+        you have a 50x50 grid, use a 50px x 50px image.)
 
         Parameters
         ----------
         img_filename : str
-            Filename of the RGB image to use as a background environment. Any
-            transparency (alpha) is ignored by the robot sensing.
+            Filename of the RGB image to use as a background environment. Any transparency (alpha)
+            is ignored by the robot sensing.
         """
         # Add an image as an environment
-        self.has_environment = True
         self._environment = WorldEnvironment(
             img_filename,
             (self._grid_width, self._grid_height))
@@ -110,16 +104,15 @@ class World:
 
     def has_new_environment(self):
         """
-        [For the Viewer]: Does the World have a new Environment since the last
-        time that the World was drawn?
+        [For the Viewer]: Does the World have a new Environment since the last time that the World
+        was drawn?
 
         Returns
         -------
         bool
-            Whether the Environment has been used by the Viewer since it was
-            added to the World
+            Whether the Environment has been used by the Viewer since it was added to the World
         """
-        return self.has_environment and not self._environment.is_in_viewer
+        return not self._environment.is_in_viewer
 
     def get_environment(self) -> Environment:
         """Get the Environment representation for this World
@@ -135,9 +128,8 @@ class World:
         """
         Run all pairwise communication of robots from broadcast messages.
 
-        This checks that the receiving robots are of the right type (specified
-        by the Mesage), and that robots are within mutual communication range of
-        each other
+        This checks that the receiving robots are of the right type (specified by the Mesage), and
+        that robots are within mutual communication range of each other.
         """
         # (Slow) loop through all robot pairs
         for tx_r in self._robots:  # transmitting robot
@@ -167,9 +159,8 @@ class World:
 
     def get_time(self) -> float:
         """
-        Get the current time of the World. At the moment, that's just the number
-        of ticks (time steps) since the simulation started, since we're in a
-        discrete world.
+        Get the current time of the World. At the moment, that's just the number of ticks (time
+        steps) since the simulation started, since we're in a discrete world.
 
         Returns
         -------
@@ -191,18 +182,16 @@ class World:
 
     def tag(self, pos: Tuple[int, int], color: Tuple[int, int, int]):
         """
-        Tag a cell position in the World with an RGB color to display in the
-        viewer. There will be a semi-transparent overlay with the given color in
-        that cell in the World. This is primarily for use with the Viewer, to
-        visualize what has been sampled in the World.
+        Tag a cell position in the World with an RGB color to display in the viewer. There will be a
+        semi-transparent overlay with the given color in that cell in the World. This is primarily
+        for use with the Viewer, to visualize what has been sampled in the World.
 
         Parameters
         ----------
         pos : Tuple[int, int]
             (x, y) grid cell position to mark
         color : Tuple[int, int, int]
-            (R, G, B) color to set as the cell's overlay color (each in the
-            range [0, 255])
+            (R, G, B) color to set as the cell's overlay color (each in the range [0, 255])
         """
         if all([0 <= c <= 255 for c in color]):
             self._tagged_pos[pos] = color

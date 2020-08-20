@@ -14,22 +14,21 @@ class Message:
                  rx_type: Type[Robot] = Robot,  # Default is any robot
                  ):
         """
-        A message sent by robots. Can be either a null (empty) message if no
-        arguments are provided to the constructor. Or it contains the sender's
-        ID, a dictionary of content, and (optionally) the type of robot that
-        receives the message.
+        A message sent by robots. Can be either a null (empty) message if no arguments are provided
+        to the constructor. Or it contains the sender's ID, a dictionary of content, and
+        (optionally) the type of robot that receives the message.
 
         Parameters
         ----------
         tx_id : Optional[int], optional
             ID of the sending (transmitting) robot, by default None
         content : Dict[str, Any]] optional
-            Dictionary of message keys and values, by default an empty
-            dictionary. Keys must be strings, but values can be of any type
-            (incumbent on receiver to correctly interpret incoming data)
+            Dictionary of message keys and values, by default an empty dictionary. Keys must be
+            strings, but values can be of any type (incumbent on receiver to correctly interpret
+            incoming data).
         rx_type : Type[Robot], optional
-            Type of the receiving robot, by default Robot (i.e., message will be
-            processed by any Robot.)
+            Type of the receiving robot, by default Robot (i.e., message will be processed by any
+            Robot.)
         """
         # Validate the message contents
         if tx_id is None and not content:
@@ -59,8 +58,8 @@ class Message:
         Parameters
         ----------
         key : Optional[str], optional
-            Name of the parameter to retrieve, by default None. If not
-            specified, a dictionary of all parameters will be returned.
+            Name of the parameter to retrieve, by default None. If not specified, a dictionary of
+            all parameters will be returned.
 
         Returns
         -------
@@ -79,17 +78,17 @@ class Message:
 
     def set(self, key: str, value: Any) -> None:
         """
-        In the message contents, set the given key to have the given value.
-        If this is an empty (null) message, this will raise an error. If the
-        key already exists, the existing value will be overwritten
+        In the message contents, set the given key to have the given value. If this is an empty
+        (null) message, this will raise an error. If the key already exists, the existing value will
+        be overwritten
 
         Parameters
         ----------
         key : str
             Key in the message contents for which to set the value
         value : Any
-            Value to set for the given key. This will overwrite any existing
-            value, if the key already exists.
+            Value to set for the given key. This will overwrite any existing value, if the key
+            already exists.
 
         Raises
         ------

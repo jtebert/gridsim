@@ -15,8 +15,8 @@ class GridRobot(Robot):
 
     def __init__(self, x: int, y: int, comm_range: float = 5):
         """
-        Create a robot that moves along the cardinal directions. Optionally, you
-        can specify a communication range for the robots.
+        Create a robot that moves along the cardinal directions. Optionally, you can specify a
+        communication range for the robots.
 
         Parameters
         ----------
@@ -37,22 +37,20 @@ class GridRobot(Robot):
 
     def set_direction(self, dir: str):
         """
-        Helper function to set the direction the robot will move. Note that this
-        will persist (the robot will keep moving) until the direction is
-        changed.
+        Helper function to set the direction the robot will move. Note that this will persist (the
+        robot will keep moving) until the direction is changed.
 
         Parameters
         ----------
         dir : int
-            Direction to move, one of ``GridRobot.UP``, ``GridRobot.DOWN``,
-            ``GridRobot.LEFT``, ``GridRobot.RIGHT``, or ``GridRobot.STAY``
+            Direction to move, one of ``GridRobot.UP``, ``GridRobot.DOWN``, ``GridRobot.LEFT``,
+            ``GridRobot.RIGHT``, or ``GridRobot.STAY``
 
         Raises
         ------
         ValueError
-            If given direction is not one of `GridRobot.UP``,
-            ``GridRobot.DOWN``, ``GridRobot.LEFT``, ``GridRobot.RIGHT``, or
-            ``GridRobot.STAY``
+            If given direction is not one of `GridRobot.UP``, ``GridRobot.DOWN``,
+            ``GridRobot.LEFT``, ``GridRobot.RIGHT``, or ``GridRobot.STAY``
         """
         if dir in GridRobot.DIRS:
             self._move_cmd = dir
@@ -61,8 +59,8 @@ class GridRobot(Robot):
 
     def move(self) -> Tuple[int, int]:
         """
-        Determine the cell the Robot will move to, based on the direction set in
-        by :meth:`~gridsim.grid_robot.GridRobot.set_motors`.
+        Determine the cell the Robot will move to, based on the direction set in by
+        :meth:`~gridsim.grid_robot.GridRobot.set_motors`.
 
         Returns
         -------
@@ -83,8 +81,8 @@ class GridRobot(Robot):
 
     def comm_criteria(self, dist: int) -> bool:
         """
-        Robots can communicate if their Euclidean distance is <= the radius
-        specified at initialization (by default, 5 cells)
+        Robots can communicate if their Euclidean distance is <= the radius specified at
+        initialization (by default, 5 cells)
 
         Parameters
         ----------

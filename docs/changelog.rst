@@ -19,18 +19,24 @@ Added
 -----
 
 - You can now set the contents of a :class:`~gridsim.message.Message` by key, without needing to create a new message.
+- When creating a :class:`~gridsim.config_parser.ConfigParser`, you can now choose to show warnings when getting a value that isn't in the config file
+- If a data directory (in the path for a :class:`~gridsim.logger.Logger` filename) does not exist, it will be created.
+- New method :meth:`~gridsim.logger.Logger.log_system_info` allows you to easily save information about the system on which the experiments are being run.
 
 Changed
 -------
 
 - Trying to have a Robot sample outside of the arena now returns None. Previously, this threw a lower-level error about an image index being out of range.
 - Decrease World tag opacity
+- Changed to 100-character line limit (from 80).
 
 Fixed
 -----
 
 - Previously, if you tried to :meth:`~gridsim.robot.Robot.sample` a negative position in the World, it would loop the index around and give you the value of a position on the other side of the environment. Now, this is considered out of bounds and returns ``None``.
 - Improve performance for drawing large number of tags in the world (by converting coordinates to integers).
+- Trying to use the :class:`~gridsim.Viewer.Viewer` without an environment image in the World would cause a crash. Now it doesn't.
+- Return type and documentation for :meth:`~gridsim.robot.Robot.sample` now matches that of the environment (returns None if sampling outside boundaries).
 
 TODO
 ----

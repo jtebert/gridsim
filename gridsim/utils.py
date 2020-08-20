@@ -8,8 +8,8 @@ def get_version(version: Optional[Tuple[int, int, int]] = None) -> str:
     Parameters
     ----------
     version : Optional[Tuple[int, int, int]], optional
-        Custom version to use, by default None. If not specified, this will use
-        the version (VERSION) specified in gridsim/__init__.py
+        Custom version to use, by default None. If not specified, this will use the version
+        (VERSION) specified in gridsim/__init__.py
 
     Returns
     -------

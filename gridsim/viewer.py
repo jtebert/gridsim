@@ -16,20 +16,18 @@ class Viewer:
         """
         Create a Viewer to display the simulation of a World.
 
-        This is optional (for debugging and visualization); simulations can be
-        run much faster if the Viewer is not used.
+        This is optional (for debugging and visualization); simulations can be run much faster if
+        the Viewer is not used.
 
         Parameters
         ----------
         world : World
             World to display
         window_width : int, optional
-            Width (in pixels) of the window to display the World, by default
-            1080
+            Width (in pixels) of the window to display the World, by default 1080
         display_rate : int, optional
-            How fast to update the view (ticks/s), by default 10. In each tick,
-            robots will move by one cell, so keep this low to be able to
-            interpret what's going on.
+            How fast to update the view (ticks/s), by default 10. In each tick, robots will move by
+            one cell, so keep this low to be able to interpret what's going on.
         show_grid : bool, optional
             Whether to show the underlying grid in the World, by default False.
         """
@@ -53,12 +51,10 @@ class Viewer:
         # Set up all of the sprites for all of the robots
         [r._sprite_setup(self._cell_size) for r in self._world.get_robots()]
 
-        # self._bg = self._create_bg()
-
     def _update_bg(self):
         """
-        Draw a background image for the Viewer (with the World's environment,
-        possibly with a grid) onto the Screen
+        Draw a background image for the Viewer (with the World's environment, possibly with a grid)
+        onto the Screen
         """
         if self._world.has_new_environment():
             self._world.get_environment().add_to_viewer(self._window_dim)
@@ -96,8 +92,8 @@ class Viewer:
         """
         Draw all of the robots in the World into the World and its environment.
 
-        This will also draw the World's environment (if one is set) and any
-        tagged cells in the World.
+        This will also draw the World's environment (if one is set) and any tagged cells in the
+        World.
         """
         if self._has_screen:
             # Set the window title
