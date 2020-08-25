@@ -12,8 +12,21 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
   :local:
   :depth: 1
 
-`0.4 <https://github.com/jtebert/gridsim/releases/tag/v0.4>`_ (2020-08-20)
+Unreleased
 ==========
+
+Added
+-----
+
+- New method :meth:`~gridsim.world.World.count_tags` returns the number of tagged locations in the world
+
+Changed
+-------
+
+- For :meth:`~gridsim.world.World.tag`, you can now pass ``None`` instead of a color to remove an existing tag.
+
+`0.4 <https://github.com/jtebert/gridsim/releases/tag/v0.4>`_ (2020-08-20)
+==========================================================================
 
 Added
 -----

@@ -181,7 +181,7 @@ class World:
         """
         return self._robots
 
-    def tag(self, pos: Tuple[int, int], color: Tuple[int, int, int]):
+    def tag(self, pos: Tuple[int, int], color: Optional[Tuple[int, int, int]] = None):
         """
         Tag a cell position in the World with an RGB color to display in the viewer. There will be a
         semi-transparent overlay with the given color in that cell in the World. This is primarily
@@ -191,10 +191,29 @@ class World:
         ----------
         pos : Tuple[int, int]
             (x, y) grid cell position to mark
-        color : Tuple[int, int, int]
-            (R, G, B) color to set as the cell's overlay color (each in the range [0, 255])
+        color : Optional[Tuple[int, int, int]], optional
+            (R, G, B) color to set as the cell's overlay color (each in the range [0, 255]). If you
+            use ``None`` instead of a color, this will clear the tag. (If no tag is set at that
+            position, nothing will happen.)
         """
-        if all([0 <= c <= 255 for c in color]):
-            self._tagged_pos[pos] = color
+        if color is None:
+            # Clear the tag. Nothing will happen if tag isn't in the dict
+            self._tagged_pos.pop(pos, default=None)
         else:
-            raise ValueError('RGB values must all be in the range [0, 255]')
+            if all([0 <= c <= 255 for c in color]):
+                self._tagged_pos[pos] = color
+            else:
+                raise ValueError('RGB values must all be in the range [0, 255]')
+
+    def count_tags(self) -> int:
+        """
+        Count the total number of tagged cells in the World. This is useful for
+        seeing (for example) how many cells in the World have been observed.
+
+        Returns
+        -------
+        int
+            Number of cells that have been tagged in the World (using the
+            :meth:`~gridsim.world.World.tag` method).
+        """
+        return len(self._tagged_pos)
