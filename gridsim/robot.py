@@ -110,9 +110,11 @@ class Robot(ABC, pygame.sprite.Sprite):
             doer not have an environment set, this will return (0, 0, 0). If the given position is
             outside the boundaries of the World, it will return ``None``.
         """
+        world_dim = self.get_world_dim()
         if pos is None:
             pos = self.get_pos()
-        if tag is not None:
+        if tag is not None and 0 <= pos[0] < world_dim[0] and 0 <= pos[1] < world_dim[1]:
+            # Also check that it's within world dimensions
             self._world.tag(pos, tag)
         return self._environment.get(pos)
 

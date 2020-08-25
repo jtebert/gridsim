@@ -6,6 +6,7 @@ import os
 import math
 
 import pygame
+from PIL import Image
 
 from .world import World
 
@@ -78,15 +79,18 @@ class Viewer:
 
     def _draw_tagged_cells(self):
         # Draw the tagged cells onto the background
-        for pos, color in self._world._tagged_pos.items():
-            # Draw the color on the position
-            cell_size_px = int(self._cell_size)
-            rect = pygame.Surface((cell_size_px, cell_size_px),
-                                  pygame.SRCALPHA)
-            rect.fill(color + (64,))
-            blit_pos = (int(pos[0] * self._cell_size),
-                        int(pos[1] * self._cell_size))
-            self._screen.blit(rect, blit_pos)
+        tagged_pos = self._world._tagged_pos.copy()
+        # Decrease opacity
+        tagged_pos[:, :, 3] = tagged_pos[:, :, 3] * .25
+        tag_dims = tagged_pos.shape
+        pil_img = Image.fromarray(tagged_pos, mode='RGBA')
+        # Convert to Pygame image
+        raw_str = pil_img.tobytes('raw', 'RGBA')
+        img = pygame.image.fromstring(raw_str, (tag_dims[1], tag_dims[0]), 'RGBA')
+        # Resize to match the viewer window
+        img = pygame.transform.scale(img, self._window_dim)
+        # Draw it
+        self._screen.blit(img, (0, 0))
 
     def draw(self):
         """
@@ -114,8 +118,7 @@ class Viewer:
             for spr in sprites:
                 if not spr.is_sprite_setup:
                     spr._sprite_setup(self._cell_size)
-                robots.spritedict[spr] = \
-                    surface_blit(spr.image, spr.rect)
+                robots.spritedict[spr] = surface_blit(spr.image, spr.rect)
             self.lostsprites = []
 
             # Update the display

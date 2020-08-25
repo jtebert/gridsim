@@ -5,6 +5,7 @@ Simulate the grid-based world, full of robots
 from typing import Tuple, List, Optional, Dict
 
 import pygame
+import numpy as np
 
 from .robot import Robot
 from .environment import Environment, ImageEnvironment
@@ -47,7 +48,14 @@ class World:
         # Cells that will be tagged (translucent color overlayed) in the Viewer
         # Dictionary of {(x, y) cell: (R, G, B) color}
         # These are set in the tag() method
-        self._tagged_pos: Dict[Tuple[int, int], Tuple[int, int, int]] = {}
+        # self._tagged_pos: Dict[Tuple[int, int], Tuple[int, int, int]] = {}
+
+        # 3D array of [width, height, RGBA] to tag positions with colors
+        # Alpha channel indicates whether cell is tagged or not.
+        # alpha = 255 is tagged
+        # alpha = 0 is untagged
+        # Values in between shouldn't be used (for now)
+        self._tagged_pos = np.zeros([self._grid_height, self._grid_width, 4], dtype=np.uint8)
 
         # Environment (image background)
         self._environment: Environment = Environment()
@@ -190,20 +198,32 @@ class World:
         Parameters
         ----------
         pos : Tuple[int, int]
-            (x, y) grid cell position to mark
+            (x, y) grid cell position to mark.
         color : Optional[Tuple[int, int, int]], optional
             (R, G, B) color to set as the cell's overlay color (each in the range [0, 255]). If you
             use ``None`` instead of a color, this will clear the tag. (If no tag is set at that
             position, nothing will happen.)
+
+        Raises
+        ------
+        ValueError
+            If you give an invalid color, or if you try to tag a position outside the World
         """
+
         if color is None:
             # Clear the tag. Nothing will happen if tag isn't in the dict
-            self._tagged_pos.pop(pos, default=None)
+            self._tagged_pos[pos[1], pos[0], :] = 0
         else:
-            if all([0 <= c <= 255 for c in color]):
-                self._tagged_pos[pos] = color
+            # Check that color is valid and you're tagging something that's in the arena
+            if len(color) == 3 and all([0 <= c <= 255 for c in color]):
+                # (Add 255 as alpha channel)
+                if 0 <= pos[0] < self._grid_width and 0 <= pos[1] < self._grid_height:
+                    self._tagged_pos[pos[1], pos[0], :] = color + (255,)
+                else:
+                    raise ValueError(
+                        f"Cannot tag position {pos} because it's not within World dimensions")
             else:
-                raise ValueError('RGB values must all be in the range [0, 255]')
+                raise ValueError('RGB color must be a 3-tuple with values in the range [0, 255]')
 
     def count_tags(self) -> int:
         """
@@ -216,4 +236,8 @@ class World:
             Number of cells that have been tagged in the World (using the
             :meth:`~gridsim.world.World.tag` method).
         """
-        return len(self._tagged_pos)
+        # Just look at the alpha channel to determine if things are tagged
+        alphas = self._tagged_pos[:, :, 3]
+        count = np.count_nonzero(alphas)
+        print(count)
+        return count

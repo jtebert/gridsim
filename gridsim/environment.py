@@ -132,7 +132,11 @@ class ImageEnvironment(Environment):
         # Get the window scaling to create a scaled PyGame image to fit the
         # display window dimensions
         # img = pygame.image.load(self._img_filename).convert()
+
+        # PIL image (1 px = 1 world cell) -> raw bytes
         raw_str = self._world_img.tobytes("raw", 'RGB')
+        # raw bytes -> Pygame image
         img = pygame.image.fromstring(raw_str, self._world_img.size, 'RGB')
-        img = pygame.transform.scale(img, self._world_dim)
+        # img = pygame.transform.scale(img, self._world_dim)
+        # Scale pygame image to world viewer window dimensions
         self._viewer_img = pygame.transform.scale(img, window_dim)

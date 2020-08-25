@@ -24,6 +24,12 @@ Changed
 -------
 
 - For :meth:`~gridsim.world.World.tag`, you can now pass ``None`` instead of a color to remove an existing tag.
+- [Under the hood] Convert World tagging to use 3D numpy array instead of list of Tuples. This also improves drawing speed ( it doesn't slow down so much when more tags are added), and you don't get gaps between tagged cells for certain window sizes.
+
+Fixed
+-----
+
+- You can now no longer :meth:`~gridsim.world.World.tag` cells that are outside of the World dimensions.
 
 `0.4 <https://github.com/jtebert/gridsim/releases/tag/v0.4>`_ (2020-08-20)
 ==========================================================================
