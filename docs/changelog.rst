@@ -27,6 +27,10 @@ Changed
 
 - For :meth:`~gridsim.world.World.tag`, you can now pass ``None`` instead of a color to remove an existing tag.
 - [Under the hood] Convert World tagging to use 3D numpy array instead of list of Tuples. This also improves drawing speed ( it doesn't slow down so much when more tags are added), and you don't get gaps between tagged cells for certain window sizes.
+- Improved code documentation.
+  - Add documentation of errors and warnings
+  - Move constructor documentation from ``__init__`` to class documentation. (I think it looks nicer.)
+  - Move documentation from \*.rst to \*.py files, for the sake of having all the documentation in the same place.
 
 Fixed
 -----

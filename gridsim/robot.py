@@ -15,19 +15,17 @@ if TYPE_CHECKING:
 
 
 class Robot(ABC, pygame.sprite.Sprite):
-    """
-    Base class for all robot classes
+    """Abstract base class for all robot classes
+
+    Parameters
+    ----------
+    x : int
+        Starting x position (grid cell) of the robot
+    y : int
+        Starting y position (grid cell) of the robot
     """
 
     def __init__(self, x: int, y: int):
-        """
-        Abstract robot base class for all Robots
-
-        Parameters
-        ----------
-        x : int Starting x position (grid cell) of the robot y : int Starting y position (grid cell)
-            of the robot
-        """
         pygame.sprite.Sprite.__init__(self)  # call Sprite initializer
 
         #: Unique ID of the Robot
@@ -60,6 +58,11 @@ class Robot(ABC, pygame.sprite.Sprite):
             Grid height of the arena
         world: World
             World that this Robot is being added to
+
+        Raises
+        ------
+        ValueError
+            If Robot is initialized outside arena bounds
         """
         # Tell the robot the size of the world
         self._arena_dim = (arena_width, arena_height)
@@ -67,10 +70,8 @@ class Robot(ABC, pygame.sprite.Sprite):
 
         # Robots must start within the World
         if not self._is_in_bounds():
-            raise ValueError("Robot created outside the dimensions " +
-                             "of the World's grid at ({}, {}).".format(
-                                 self._x, self._y,
-                             ))
+            raise ValueError("Robot created outside the dimensions "
+                             f"of the World's grid at ({self._x}, {self._y}).")
 
         # Add the World's environment, if it has one
         self._environment = world.get_environment()
@@ -94,10 +95,10 @@ class Robot(ABC, pygame.sprite.Sprite):
 
         Parameters
         ----------
-        pos : Optional[Tuple[int, int]]
+        pos : Tuple[int, int], optional
             (x, y) grid cell position of the World to sample. If not specified,
             the current robot position is sampled.
-        tag: Optional[Tuple[int, int, int]], optional
+        tag: Tuple[int, int, int], optional
             RGB color to tag this position in the World, by default None. If not provided, the cell
             in the World won't be tagged with any color. Otherwise, there will be a semi-transparent
             overlay with the given color in that cell in the World. This is primarily for use with
@@ -105,7 +106,7 @@ class Robot(ABC, pygame.sprite.Sprite):
 
         Returns
         -------
-        Optional[Tuple[int, int, int]]
+        Tuple[int, int, int] or None
             (red, green, blue) color at the given coordinate in the range [0, 255]. If the world
             doer not have an environment set, this will return (0, 0, 0). If the given position is
             outside the boundaries of the World, it will return ``None``.
@@ -247,15 +248,14 @@ class Robot(ABC, pygame.sprite.Sprite):
         if self._is_in_world:
             return self._arena_dim
         else:
-            raise ValueError("Cannot get dimensions because " +
-                             "Robot is not in a World.")
+            raise ValueError("Cannot get dimensions because Robot is not in a World.")
 
     def get_tx_message(self) -> Message:
         """
         Get the message queued for transmission (broadcast). This is likely not needed in the user
         API; it's used by the World in its communication protocol.
 
-        The message is set by the `set_tx_message` function
+        The message is set by the :meth:`~gridsim.robot.Robot.set_tx_message` method
 
         Returns
         -------

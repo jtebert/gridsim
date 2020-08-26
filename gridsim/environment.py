@@ -27,7 +27,7 @@ class Environment:
 
         Returns
         -------
-        Optional[Tuple[int, int, int]]:
+        Tuple[int, int, int] or None:
             (0, 0, 0,) -- Null environment's color is always considered black.
         """
         return 0, 0, 0
@@ -59,30 +59,32 @@ class Environment:
         -------
         pygame.Surface
             Image of the Environment (background image)
+
+        Raises
+        ------
+        ValueError
+            If image is not in in the Viewer
         """
         if self.is_in_viewer:
             return self._viewer_img
         else:
-            raise ValueError("Can't get the image because the environment" +
+            raise ValueError("Can't get the image because the environment"
                              " hasn't been added to the viewer")
 
 
 class ImageEnvironment(Environment):
     """
-    This represent the pattern in the world's environment, represented by an image.
+    This represent the pattern in the world's environment with an Image
+
+    Parameters
+    ----------
+    img_filename : str
+        Filename + path of the image to use as the environment.
+    grid_dim : Tuple[int, int]
+        (width, height) of the World grid
     """
 
     def __init__(self, img_filename: str, grid_dim: Tuple[int, int]):
-        """
-        Use the provided image as the background for the world.
-
-        Parameters
-        ----------
-        img_filename : str
-            Filename + path of the image to use as the environment.
-        grid_dim : Tuple[int, int]
-            (width, height) of the World grid
-        """
         super().__init__()
 
         self._img_filename = Path(img_filename).expanduser().resolve()
@@ -107,7 +109,7 @@ class ImageEnvironment(Environment):
 
         Returns
         -------
-        Optional[Tuple[int, int, int]]:
+        Tuple[int, int, int] or None:
             (red, blue, green) color of the environment in the given cell. If the given position is
             outside of the arena/image, it will return None.
         """

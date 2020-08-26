@@ -83,7 +83,7 @@ def main(config_file: str):
             viewer.draw()
             # Save the state of the World using the aggregators
             logger.log_state()
-        print('TRIAL {} FINISHED'.format(trial))
+        print(f'TRIAL {trial} FINISHED')
 
     print('SIMULATION FINISHED')
 

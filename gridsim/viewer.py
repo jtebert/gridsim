@@ -1,5 +1,12 @@
 """
-[Optional] For viewing the simulations, using Pygame
+The Viewer is a simple way to visualize your simulations. After creating the Viewer, just call
+:meth:`~gridsim.viewer.Viewer.draw` each step (or less frequently) to see the current state of the
+World.
+
+.. note::
+   The maximum Viewer refresh rate (set at creation with the ``display_rate`` argument) also limits
+   the simulation rate. If you want to run faster/higher-throughput simulations, don't use the
+   Viewer, or make it draw less frequently than every tick.
 """
 
 import os
@@ -12,26 +19,27 @@ from .world import World
 
 
 class Viewer:
+    """Viewer to display the simulation of a World.
+
+    This is optional (for debugging and visualization); simulations can be run much faster if
+    the Viewer is not used.
+
+    Parameters
+    ----------
+    world : World
+        World to display
+    window_width : int, optional
+        Width (in pixels) of the window to display the World, by default 1080
+    display_rate : int, optional
+        How fast to update the view (ticks/s), by default 10. In each tick, robots will move by one
+        cell, so keep this low to be able to interpret what's going on.
+    show_grid : bool, optional
+        Whether to show the underlying grid in the World, by default False.
+    """
+
     def __init__(self, world: World, window_width: int = 1080,
                  display_rate: int = 10, show_grid: bool = False):
-        """
-        Create a Viewer to display the simulation of a World.
 
-        This is optional (for debugging and visualization); simulations can be run much faster if
-        the Viewer is not used.
-
-        Parameters
-        ----------
-        world : World
-            World to display
-        window_width : int, optional
-            Width (in pixels) of the window to display the World, by default 1080
-        display_rate : int, optional
-            How fast to update the view (ticks/s), by default 10. In each tick, robots will move by
-            one cell, so keep this low to be able to interpret what's going on.
-        show_grid : bool, optional
-            Whether to show the underlying grid in the World, by default False.
-        """
         self._world = world
         self._clock = pygame.time.Clock()
         self._tick_rate = display_rate
@@ -102,7 +110,7 @@ class Viewer:
         if self._has_screen:
             # Set the window title
             pygame.display.set_caption(
-                'Gridsim (t={})'.format(self._world.get_time()))
+                f'Gridsim (t={self._world.get_time()})')
 
             # If the world has a new environment, change the viewer background
             self._update_bg()

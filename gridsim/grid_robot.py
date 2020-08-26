@@ -6,27 +6,35 @@ from .robot import Robot
 
 
 class GridRobot(Robot):
+    """
+    A robot that moves along the cardinal directions, with customizable communication range.
+
+    It provides constants for moving up, down, left, and right.
+
+    Parameters
+    ----------
+    x : int
+        Starting x position (grid cell) of the robot
+    y : int
+        Starting y position (grid cell) of the robot
+    comm_range : float, optional
+        Communication radius (in grid cells) of the robot, by default 5
+    """
+
+    #: Robot stays where it is
     STAY = 'stay'
+    #: Robot moves up 1 cell (decrease y position by 1)
     UP = 'up'
+    #: Robot moves down 1 cell (increase y position by 1)
     DOWN = 'down'
+    #: Robot moves left 1 cell (decrease x position by 1)
     LEFT = 'left'
+    #: Robot moves right 1 cell (increase x position by 1)
     RIGHT = 'right'
+
     DIRS = [STAY, UP, DOWN, LEFT, RIGHT]
 
     def __init__(self, x: int, y: int, comm_range: float = 5):
-        """
-        Create a robot that moves along the cardinal directions. Optionally, you can specify a
-        communication range for the robots.
-
-        Parameters
-        ----------
-        x : int
-            Starting x position (grid cell) of the robot
-        y : int
-            Starting y position (grid cell) of the robot
-        comm_range : float, optional
-            Communication radius (in grid cells) of the robot, by default 5
-        """
         # Run all of the initialization for the default Robot class, including
         # setting the starting position
         super().__init__(x, y)
@@ -55,7 +63,7 @@ class GridRobot(Robot):
         if dir in GridRobot.DIRS:
             self._move_cmd = dir
         else:
-            raise ValueError('Invalid movement direction "{}"'.format(dir))
+            raise ValueError('Invalid movement direction "{dir}"')
 
     def move(self) -> Tuple[int, int]:
         """

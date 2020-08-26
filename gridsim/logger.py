@@ -1,8 +1,48 @@
-"""
-For logging data out of the simulator (probably as HDF5, but TBD)
+"""For logging data out of the simulator using HDF5 files.
+
+The logger provides an interface for easily saving time series data from many simulation trials,
+along with the parameters used for the simulation. Data is logged in `HDF5
+<https://www.hdfgroup.org/solutions/hdf5/>`_ (Hierarchical Data Format) files.
+
+Data is stored by trial, in a hierarchy like a file structure, as shown below. Values in ``<`` ``>``
+are determined by what you actually log, but the ``params`` group and ``time`` dataset are always
+created.
+
+::
+
+    log_file.h5
+    ├── trial_<1>
+    │   ├── params
+    │   │   ├── <param_1>
+    │   │   ├── <param_2>
+    │   │   ├── ⋮
+    │   │   └── <param_n>
+    │   ├── system_info
+    │   │   ├── datetime_local
+    │   │   ├── gridsim_version
+    │   │   ├── ⋮
+    │   │   └── version
+    │   ├── time
+    │   ├── <aggregator_1>
+    │   ├── <aggregator_2>
+    │   ├── ⋮
+    │   └── <aggregator_n>
+    ├── trial_<2>
+    │   └── ⋮
+    ├── ⋮
+    └── trial_<n>
+
+All values logged with :meth:`~gridsim.logger.Logger.log_param` and
+:meth:`~gridsim.logger.Logger.log_config` are saved in ``params``.
+
+Time series data is stored in datasets directly under the ``trial_<n>`` group. They are created by
+:meth:`~gridsim.logger.Logger.add_aggregator`, and new values are added by
+:meth:`~gridsim.logger.Logger.log_state`. Calling this method also adds a value to the ``time``
+dataset, which corresponds to the :class:`~gridsim.world.World` time at which the state was saved.
 """
 
 from typing import Optional, Callable, List, Dict, Union
+import warnings
 import os
 import re
 from pathlib import Path
@@ -19,6 +59,27 @@ from .utils import get_version
 
 
 class Logger:
+    """
+    Logger to save data to an HDF5 file, from a single simulation trial.
+
+    Note that *creating* this only creates the Logger with which you can save data. You must use the
+    methods below to actually save anything to the file with the Logger.
+
+    Parameters
+    ----------
+    world : World
+        World whose simulation data you want to save.
+    filename : str
+        Name of the HDF5 file to save data to (``.hdf`` extension). If the file does not exist,
+        it will be created. If it does exist, it will be appended to (with the overwriting
+        caveat specified below). Using ``~`` to indicate the home directory in the path is
+        supported. If the directory does not exist, it will be created (if possible).
+    trial_num : int
+        Trial number under which to save the data.
+    overwrite_trials : bool, optional
+        Whether to overwrite a trial's data if it already exists, by default False
+    """
+
     # Allowed parameter datatypes (from configuration) that can be logged
     PARAM_TYPE = Union[str, int, float, bool, list, dict]
     # Mapping between Python datatypes and h5py/HDF5 datatypes
@@ -35,34 +96,14 @@ class Logger:
         return re.findall(r"'(.*?)'", str(type_v))[0]
 
     def __init__(self, world: World, filename: str, trial_num: int,
-                 overwrite_trials: Optional[bool] = False):
-        """
-        Create a Logger to save data to an HDF5 file, from a single simulation trial.
-
-        Note that this only creates the Logger with which you can save data. You must use the
-        methods below to actually save anything to the file with the Logger.
-
-        Parameters
-        ----------
-        world : World
-            World whose simulation data you want to save.
-        filename : str
-            Name of the HDF5 file to save data to (``.hdf`` extension). If the file does not exist,
-            it will be created. If it does exist, it will be appended to (with the overwriting
-            caveat specified below). Using ``~`` to indicate the home directory in the path is
-            supported. If the directory does not exist, it will be created (if possible).
-        trial_num : int
-            Trial number under which to save the data.
-        overwrite_trials : Optional[bool], optional
-            Whether to overwrite a trial's data if it already exists, by default False
-        """
+                 overwrite_trials: bool = False):
         self._world = world
         self._filename = filename
         self._trial_num = trial_num
         self._overwrite_trials = overwrite_trials
         self._log_file = self._create_log_file(filename)
 
-        self._trial_group_name = "trial_{}".format(trial_num)
+        self._trial_group_name = f"trial_{trial_num}"
         self._params_group_name = os.path.join(self._trial_group_name, 'params')
         self._system_info_group_name = os.path.join(self._trial_group_name, 'system_info')
         self._time_dset_name = os.path.join(self._trial_group_name, 'time')
@@ -98,17 +139,20 @@ class Logger:
         ValueError
             If a group for the trial exists in the log file and overwriting has been disallowed, an
             error will be raised.
+
+        Warns
+        -----
+        UserWarning
+            If overwriting existing trial
         """
         # Create group for the trial
         if self._trial_group_name in self._log_file:
             if self._overwrite_trials:
                 # Delete previous trial group
                 del self._log_file[self._trial_group_name]
-                print("WARNING: Overwrote trial {} data"
-                      .format(self._trial_num))
+                warnings.warn(f'Overwrote trial {self._trial_num} data')
             else:
-                raise ValueError('Conflicts with existing trial {}. '
-                                 .format(self._trial_num) +
+                raise ValueError(f'Conflicts with existing trial {self._trial_num}. '
                                  'Exiting to avoid data overwrite')
         self._log_file.create_group(self._trial_group_name)
 
@@ -164,6 +208,11 @@ class Logger:
         func : Callable[[List[Robot]], np.ndarray]
             Function that maps from a list of Robots to a 1D array to log some state of the Robots
             at the current time.
+        Raises
+        ------
+        ValueError
+            If aggregator ``name`` uses a reserved name (see above) or if aggregator does not return
+            a 1D numpy array.
         """
         # Check that the name isn't an existing reserved group name (eg params)
         if name in self._reserved_names:
@@ -254,10 +303,15 @@ class Logger:
             Name/key of the parameter value to save
         val : Union[str, int, float, bool, list, dict]
             Value of the parameter to save
-        sub_group : Optional[str]
+        sub_group : str
             Name of a sub-group of the "params" group in which to log the parameter. If not given,
             the parameter will be placed directly in the params group. You can specify multiple
             levels of sub-groups by concatenating names with ``/``. e.g., ``sub/subsub``
+
+        Warns
+        -----
+        UserWarning
+            If user attempts to save invalid parameter (e.g., invalid data type)
         """
         if sub_group is not None:
             name = os.path.join(sub_group, param_name)
@@ -277,22 +331,14 @@ class Logger:
                 lambda v: isinstance(v, int) or isinstance(v, float),
                 val))
             if not all_floats:
-                # raise ValueError('Can only log lists of ints and floats')
-                print('WARNING: Can only save lists of ints and floats. ' +
-                      'Skipping parameter "{}"'
-                      .format(name))
+                warnings.warn('Can only save lists of ints and floats. '
+                              f'Skipping parameter "{name}"')
                 return
         try:
             dtype = Logger.DATATYPE_MAP[v_type]
         except KeyError:
-            # raise ValueError("""Cannot process '{}' data.
-            #  Can only process data of types: {}
-            #     """.format(
-            #     Logger.type_str(v_type),
-            #     list(map(Logger.type_str,
-            #              Logger.DATATYPE_MAP.keys()))))
-            print('WARNING: Cannot save {} data. Skipping parameter "{}"'
-                  .format(Logger.type_str(v_type), param_name))
+            warnings.warn(f'Cannot save {Logger.type_str(v_type)} data. '
+                          'fSkipping parameter "{param_name}"')
             return
         self._log_file.create_dataset(dset_name, data=val, dtype=dtype)
 

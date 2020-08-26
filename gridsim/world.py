@@ -1,5 +1,11 @@
 """
 Simulate the grid-based world, full of robots
+
+The World is where all of the simulation happens. Robots are added to the World, and the Viewer and
+Logger refer to a World to draw the simulation and save data.
+
+Once the World is created and you have added your robots, you will likely only need to call the
+:meth:`~gridsim.world.World.step` method.
 """
 
 from typing import Tuple, List, Optional, Dict
@@ -12,32 +18,31 @@ from .environment import Environment, ImageEnvironment
 
 
 class World:
+    """A simulated 2D grid world for simulated Robots.
+
+    Parameters
+    ----------
+    width : int
+        Width of the world (number of cells)
+    height : int
+        Height of the world (number of cells)
+    robots : List[Robot], optional
+        List of Robots to place in the World to start, by default []. Additional robots can be
+        added after initialization with the :meth:`~gridsim.world.World.add_robot` method.
+    environment : str, optional
+        Filename of an image to use for a background in the World. Robots will be able to sense
+        the color of this image. If the environment dimensions do not match the World
+        dimensions, the image will be re-scaled (and possibly stretched). I recommend using an
+        image with the same resolution as your grid size. This supports using ``~`` to indicate
+        the user home directory.
+    allow_collisions : bool, optional
+        Whether or not to allow Robots to exist in the same grid cell, by default True.
+    """
 
     def __init__(self, width: int, height: int,
                  robots: List[Robot] = [],
                  environment: str = '',
                  allow_collisions: bool = True):
-        """
-        Create a World for simulating Robots in a grid world
-
-        Parameters
-        ----------
-        width : int
-            Width of the world (number of cells)
-        height : int
-            Height of the world (number of cells)
-        robots : List[Robot], optional
-            List of Robots to place in the World to start, by default []. Additional robots can be
-            added after initialization with the :meth:`~gridsim.world.World.add_robot` method.
-        environment : str, optional
-            Filename of an image to use for a background in the World. Robots will be able to sense
-            the color of this image. If the environment dimensions do not match the World
-            dimensions, the image will be re-scaled (and possibly stretched). I recommend using an
-            image with the same resolution as your grid size. This supports using ``~`` to indicate
-            the user home directory.
-        allow_collisions : bool, optional
-            Whether or not to allow Robots to exist in the same grid cell, by default True.
-        """
         self._grid_width = width
         self._grid_height = height
         self._robots = pygame.sprite.Group()
@@ -199,7 +204,7 @@ class World:
         ----------
         pos : Tuple[int, int]
             (x, y) grid cell position to mark.
-        color : Optional[Tuple[int, int, int]], optional
+        color : Tuple[int, int, int] or None, optional
             (R, G, B) color to set as the cell's overlay color (each in the range [0, 255]). If you
             use ``None`` instead of a color, this will clear the tag. (If no tag is set at that
             position, nothing will happen.)
@@ -239,5 +244,4 @@ class World:
         # Just look at the alpha channel to determine if things are tagged
         alphas = self._tagged_pos[:, :, 3]
         count = np.count_nonzero(alphas)
-        print(count)
         return count
