@@ -19,6 +19,8 @@ Added
 -----
 
 - New method :meth:`~gridsim.world.World.count_tags` returns the number of tagged locations in the world
+- :class:`~gridsim.logger.Logger` now supports logging dictionary parameters (including those saved from config files).
+- When logging parameters with :meth:`~gridsim.logger.Logger.log_param`, you can now specify a subgroup of ``params`` in which to save the data.
 
 Changed
 -------
@@ -30,6 +32,7 @@ Fixed
 -----
 
 - You can now no longer :meth:`~gridsim.world.World.tag` cells that are outside of the World dimensions.
+- An error is raised when trying to create a :class:`~gridsim.logger.Logger` aggregator (with :meth:`~gridsim.logger.Logger.add_aggregator`) using a reserved name (e.g., ``params`` or ``time``).
 
 `0.4 <https://github.com/jtebert/gridsim/releases/tag/v0.4>`_ (2020-08-20)
 ==========================================================================

@@ -20,7 +20,7 @@ from .utils import get_version
 
 class Logger:
     # Allowed parameter datatypes (from configuration) that can be logged
-    PARAM_TYPE = Union[str, int, float, bool, list]
+    PARAM_TYPE = Union[str, int, float, bool, list, dict]
     # Mapping between Python datatypes and h5py/HDF5 datatypes
     DATATYPE_MAP = {
         str: h5py.string_dtype(),  # http://docs.h5py.org/en/stable/strings.html
@@ -66,6 +66,13 @@ class Logger:
         self._params_group_name = os.path.join(self._trial_group_name, 'params')
         self._system_info_group_name = os.path.join(self._trial_group_name, 'system_info')
         self._time_dset_name = os.path.join(self._trial_group_name, 'time')
+
+        # Aggregators cannot use any of these already-used names
+        self._reserved_names = [
+            self._params_group_name,
+            self._system_info_group_name,
+            self._time_dset_name]
+
         self._set_trial()
 
         self._aggregators: Dict[str, Callable[[List[Robot]], np.ndarray]] = {}
@@ -158,6 +165,9 @@ class Logger:
             Function that maps from a list of Robots to a 1D array to log some state of the Robots
             at the current time.
         """
+        # Check that the name isn't an existing reserved group name (eg params)
+        if name in self._reserved_names:
+            raise ValueError('Aggregator cannot use reserved name "{name}"')
         # Add the function to the aggregators to be called for logging the state
         self._aggregators[name] = func
 
@@ -167,7 +177,7 @@ class Logger:
         # Should be 1D array (size is a single integer)
         if not isinstance(out_size, int):
             raise ValueError(
-                "Aggregator {} must return a 1D array".format(name))
+                f"Aggregator {name} must return a 1D array")
         agg_dset_name = os.path.join(self._trial_group_name, name)
         # Setting the max_shape with None allows for resizing to add data
         self._log_file.create_dataset(agg_dset_name,
@@ -230,7 +240,7 @@ class Logger:
         for name, val in params.items():
             self.log_param(name, val)
 
-    def log_param(self, name: str, val: PARAM_TYPE):
+    def log_param(self, param_name: str, val: PARAM_TYPE, sub_group: Optional[str] = None):
         """
         Save a single parameter value. This is useful for saving fixed parameters that are not part
         of your configuration file, and therefore not saved with
@@ -240,13 +250,27 @@ class Logger:
 
         Parameters
         ----------
-        name : str
+        param_name : str
             Name/key of the parameter value to save
-        val : Union[str, int, float, bool, list]
+        val : Union[str, int, float, bool, list, dict]
             Value of the parameter to save
+        sub_group : Optional[str]
+            Name of a sub-group of the "params" group in which to log the parameter. If not given,
+            the parameter will be placed directly in the params group. You can specify multiple
+            levels of sub-groups by concatenating names with ``/``. e.g., ``sub/subsub``
         """
+        if sub_group is not None:
+            name = os.path.join(sub_group, param_name)
+        else:
+            name = param_name
         dset_name = os.path.join(self._params_group_name, name)
         v_type = type(val)
+
+        if isinstance(val, dict):
+            # Saving a dictionary means creating a group instead of dataset
+            for d_key, d_val in val.items():
+                self.log_param(d_key, d_val, sub_group=name)
+            return
         if isinstance(val, list):
             # Check that it's a list of floats or ints
             all_floats = all(map(
@@ -268,7 +292,7 @@ class Logger:
             #     list(map(Logger.type_str,
             #              Logger.DATATYPE_MAP.keys()))))
             print('WARNING: Cannot save {} data. Skipping parameter "{}"'
-                  .format(Logger.type_str(v_type), name))
+                  .format(Logger.type_str(v_type), param_name))
             return
         self._log_file.create_dataset(dset_name, data=val, dtype=dtype)
 
