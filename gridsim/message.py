@@ -93,12 +93,12 @@ class Message:
         else:
             return self._content[key]
 
-    def set(self, key: str, value: Any) -> None:
+    def set(self, key: Optional[str], value: Any):
         """Set the message contents
 
         In the message contents, set the given key to have the given value. If this is an empty
         (null) message, this will raise an error. If the key already exists, the existing value will
-        be overwritten
+        be overwritten.
 
         Parameters
         ----------
@@ -117,6 +117,29 @@ class Message:
             raise ValueError("Cannot set the message contents for a null message")
         else:
             self._content[key] = value
+
+    def set_all(self, content: Dict[str, Any]):
+        """Replace the whole message content of the dictionary.
+
+        This will replace *all* of the existing message content.
+
+        If you want to clear the message contents, you can pass any empty dictionary as the
+        ``content`` (``{}``).
+
+        Parameters
+        ----------
+        content : Dict[str, Any]
+            Complete dictionary to set as the message contents
+
+        Raises
+        ------
+        ValueError
+            If the message is null/empty, the message contents cannot be set
+        """
+        if not self:
+            raise ValueError("Cannot set the message contents for a null message")
+        else:
+            self._content = content
 
     def sender(self) -> Optional[int]:
         """Get the ID (32-bit integer) of the robot that sent the message

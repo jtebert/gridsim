@@ -21,6 +21,7 @@ Added
 - New method :meth:`~gridsim.world.World.count_tags` returns the number of tagged locations in the world
 - :class:`~gridsim.logger.Logger` now supports logging dictionary parameters (including those saved from config files).
 - When logging parameters with :meth:`~gridsim.logger.Logger.log_param`, you can now specify a subgroup of ``params`` in which to save the data.
+- :class:`~gridsim.message.Message` now has a method :meth:`~gridsim.message.Message.set_all` to replace the whole contents of the Message without creating a new message. (And as opposed to setting the contents key-by-key with :meth:`~gridsim.message.Message.set_all`.)
 
 Changed
 -------
@@ -28,6 +29,7 @@ Changed
 - For :meth:`~gridsim.world.World.tag`, you can now pass ``None`` instead of a color to remove an existing tag.
 - [Under the hood] Convert World tagging to use 3D numpy array instead of list of Tuples. This also improves drawing speed ( it doesn't slow down so much when more tags are added), and you don't get gaps between tagged cells for certain window sizes.
 - Improved code documentation.
+
   - Add documentation of errors and warnings
   - Move constructor documentation from ``__init__`` to class documentation. (I think it looks nicer.)
   - Move documentation from \*.rst to \*.py files, for the sake of having all the documentation in the same place.
@@ -67,11 +69,6 @@ Fixed
 - Return type and documentation for :meth:`~gridsim.robot.Robot.sample` now matches that of the environment (returns None if sampling outside boundaries).
 - Fix broken :func:`~gridsim.utils.get_version` function.
 - Time in :class:`~gridsim.logger.Logger` is now stored as an integer (since it's ticks). Previously, it was a float.
-
-TODO
-----
-
-- There's no way to set the whole message contents or clear keys/values in the contents
 
 `0.3 <https://github.com/jtebert/gridsim/releases/tag/v0.3>`_ (2020-06-29)
 ==========================================================================
