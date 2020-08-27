@@ -18,6 +18,7 @@ Unreleased
 Added
 -----
 
+- :class:`~gridsim.world.World` now has the capability for probabilistic observations. For more information, see the World constructor documentation.
 - New method :meth:`~gridsim.world.World.count_tags` returns the number of tagged locations in the world
 - :class:`~gridsim.logger.Logger` now supports logging dictionary parameters (including those saved from config files).
 - When logging parameters with :meth:`~gridsim.logger.Logger.log_param`, you can now specify a subgroup of ``params`` in which to save the data.

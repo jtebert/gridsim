@@ -37,12 +37,19 @@ class World:
         the user home directory.
     allow_collisions : bool, optional
         Whether or not to allow Robots to exist in the same grid cell, by default True.
+    observation_stdev : float, optional
+        If 0 (this is the default), observations will return the exact RGB value of environment
+        image in each cell. If non-zero (should be >= 0), each component of the observations will be
+        drawn from a normal distribution with mean at the image value, and using this standard
+        deviation. If no image is provided as the ``environment``, observations will be returned as
+        0s, regardless of the ``observation_std``.
     """
 
     def __init__(self, width: int, height: int,
                  robots: List[Robot] = [],
                  environment: str = '',
-                 allow_collisions: bool = True):
+                 allow_collisions: bool = True,
+                 observation_stdev: float = 0.):
         self._grid_width = width
         self._grid_height = height
         self._robots = pygame.sprite.Group()
@@ -50,10 +57,7 @@ class World:
         self._allow_collisions = allow_collisions
         self._tick = 0
 
-        # Cells that will be tagged (translucent color overlayed) in the Viewer
-        # Dictionary of {(x, y) cell: (R, G, B) color}
-        # These are set in the tag() method
-        # self._tagged_pos: Dict[Tuple[int, int], Tuple[int, int, int]] = {}
+        self._observation_stdev = observation_stdev
 
         # 3D array of [width, height, RGBA] to tag positions with colors
         # Alpha channel indicates whether cell is tagged or not.
@@ -111,12 +115,13 @@ class World:
         # Add an image as an environment
         self._environment = ImageEnvironment(
             img_filename,
-            (self._grid_width, self._grid_height))
+            (self._grid_width, self._grid_height),
+            observation_std=self._observation_stdev)
         # Make sure all the Robots have the environment information
         for r in self._robots:
             r._environment = self._environment
 
-    def has_new_environment(self):
+    def has_new_environment(self) -> bool:
         """
         [For the Viewer]: Does the World have a new Environment since the last time that the World
         was drawn?

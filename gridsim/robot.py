@@ -83,7 +83,7 @@ class Robot(ABC, pygame.sprite.Sprite):
 
     def sample(self, pos: Optional[Tuple[int, int]] = None,
                tag: Optional[Tuple[int, int, int]] = None) \
-            -> Optional[Tuple[int, int, int]]:
+            -> Optional[Tuple[float, float, float]]:
         """
         Sample the RGB environment at the given cell location, or (if no ``pos`` given) and the
         robot's current position.
@@ -106,7 +106,7 @@ class Robot(ABC, pygame.sprite.Sprite):
 
         Returns
         -------
-        Tuple[int, int, int] or None
+        Tuple[float, float, float] or None
             (red, green, blue) color at the given coordinate in the range [0, 255]. If the world
             doer not have an environment set, this will return (0, 0, 0). If the given position is
             outside the boundaries of the World, it will return ``None``.

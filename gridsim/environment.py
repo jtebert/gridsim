@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pygame
 from PIL import Image
+import numpy as np
 
 
 class Environment:
@@ -15,7 +16,7 @@ class Environment:
         # This is a placeholder empty image
         self._viewer_img = pygame.Surface((0, 0))
 
-    def get(self, pos: Tuple[int, int]) -> Optional[Tuple[int, int, int]]:
+    def get(self, pos: Tuple[int, int]) -> Optional[Tuple[float, float, float]]:
         """
         Get the RGB color in the given (x,y) cell. For a null environment, this always returns (0,
         0, 0) (black)
@@ -27,7 +28,7 @@ class Environment:
 
         Returns
         -------
-        Tuple[int, int, int] or None:
+        Tuple[float, float, float] or None:
             (0, 0, 0,) -- Null environment's color is always considered black.
         """
         return 0, 0, 0
@@ -82,9 +83,14 @@ class ImageEnvironment(Environment):
         Filename + path of the image to use as the environment.
     grid_dim : Tuple[int, int]
         (width, height) of the World grid
+    observation_stdev : float, optional
+        If 0 (this is the default), observations will return the exact RGB value of environment
+        image in each cell. If non-zero (should be >= 0), each component of the observations will be
+        drawn from a normal distribution with mean at the image value, and using this standard
+        deviation.
     """
 
-    def __init__(self, img_filename: str, grid_dim: Tuple[int, int]):
+    def __init__(self, img_filename: str, grid_dim: Tuple[int, int], observation_std: float = 0.):
         super().__init__()
 
         self._img_filename = Path(img_filename).expanduser().resolve()
@@ -94,11 +100,13 @@ class ImageEnvironment(Environment):
         self._world_dim = grid_dim
         self._world_img = img.resize(grid_dim, Image.NEAREST)
 
+        self._observation_std = observation_std
+
     def __bool__(self):
         # All non-empty environments are True
         return True
 
-    def get(self, pos: Tuple[int, int]) -> Optional[Tuple[int, int, int]]:
+    def get(self, pos: Tuple[int, int]) -> Optional[Tuple[float, float, float]]:
         """
         Get the RGB color in the given (x,y) cell
 
@@ -109,16 +117,19 @@ class ImageEnvironment(Environment):
 
         Returns
         -------
-        Tuple[int, int, int] or None:
+        Tuple[float, float, float] or None:
             (red, blue, green) color of the environment in the given cell. If the given position is
             outside of the arena/image, it will return None.
         """
         # Get color in this grid cell
         if (0 <= pos[0] < self._world_dim[0]) and (0 <= pos[1] < self._world_dim[1]):
             color = self._world_img.getpixel(pos)
-            return color
         else:
             return None
+        if self._observation_std != 0:
+            return tuple(np.random.normal(c, self._observation_std) for c in color)
+        else:
+            return color
 
     def add_to_viewer(self, window_dim: Tuple[int, int]):
         """
