@@ -327,10 +327,8 @@ class Logger:
             return
         if isinstance(val, list):
             # Check that it's a list of floats or ints
-            all_floats = all(map(
-                lambda v: isinstance(v, int) or isinstance(v, float),
-                val))
-            if not all_floats:
+            all_valid = all([isinstance(v, (int, float)) for v in val])
+            if not all_valid:
                 warnings.warn('Can only save lists of ints and floats. '
                               f'Skipping parameter "{name}"')
                 return

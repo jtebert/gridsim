@@ -15,7 +15,7 @@ class RandomRobot(GridRobot):
         # Next tick when Robot will change direction
         self._next_dir_change = self.get_tick()
 
-    def receive_msg(self, msg: gs.Message, dist: float):
+    def receive_msg(self, msg: gs.Message, dist_sqr: float):
         # This robot got a message from another robot
         self._msg_sent = True
 

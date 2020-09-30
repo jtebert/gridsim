@@ -157,11 +157,11 @@ class World:
                 for rx_r in self._robots:  # receiving robot
                     # Receiver must be target type (and not itself)
                     if tx_r != rx_r and isinstance(rx_r, msg._rx_type):
-                        dist = tx_r.distance(rx_r.get_pos())
-                        if tx_r.comm_criteria(dist) and \
-                                rx_r.comm_criteria(dist):
+                        dist_sqr = tx_r._distance_sqr(rx_r.get_pos())
+                        # dist = tx_r.distance(rx_r.get_pos())
+                        if tx_r.comm_criteria(dist_sqr) and rx_r.comm_criteria(dist_sqr):
                             # Receiving robot processes incoming message
-                            rx_r.receive_msg(msg, dist)
+                            rx_r.receive_msg(msg, dist_sqr)
                             # Tell sender that the message was received
                             tx_r.msg_received()
 

@@ -304,6 +304,25 @@ class Robot(ABC, pygame.sprite.Sprite):
         # return np.abs(self._x - pos[0]) + np.abs(self._y - pos[1])# Manhattan
         return np.sqrt((self._x - pos[0])**2+(self._y-pos[1])**2)
 
+    def _distance_sqr(self, pos: Tuple[int, int]) -> int:
+        """
+        Get the SQUARED Euclidian distance between the robot's current position and the given pos.
+
+        This is used to avoid the computationally costly square root function when it can be
+        avoided.
+
+        Parameters
+        ----------
+        pos : Tuple[int, int]
+            Position to find the distance from
+
+        Returns
+        -------
+        int
+            Distance squared -- (x0-x1)^2 + (y0-y1)^2
+        """
+        return (self._x - pos[0])**2 + (self._y-pos[1])**2
+
     def _is_in_bounds(self) -> bool:
         # Check if the Robot is within the world boundaries
         return 0 <= self._x < self._arena_dim[0] and \
@@ -342,14 +361,21 @@ class Robot(ABC, pygame.sprite.Sprite):
         pass
 
     @abstractmethod
-    def comm_criteria(self, dist: int) -> bool:
+    def comm_criteria(self, dist_sqr: int) -> bool:
         """
-        Criterion for whether message can be communicated (base on distance)
+        Criterion for whether message can be communicated (base on distance).
+
+        Note
+        ----
+        This takes the squared distance instead of the distance, because it is much less
+        computationally expensive to compute. If you need to take the square root, you can do so
+        here, but because this function is called so much, it will be slow. Instead, consider
+        comparing to the squared communication range.
 
         Parameters
         ----------
-        dist : int
-            Distance between this robot and the other robot
+        dist_sqr : int
+            SQUARED distance between this robot and the other robot
 
         Returns
         -------
@@ -359,17 +385,22 @@ class Robot(ABC, pygame.sprite.Sprite):
         pass
 
     @abstractmethod
-    def receive_msg(self, msg: Message, dist: float):
+    def receive_msg(self, msg: Message, dist_sqr: float):
         """
         Function called when the robot receives a message. This allows the specific robot
         implementation to choose how to process the messages that it receives, asynchronously.
+
+        Note
+        ----
+        This used the squared distance instead of distance. To understand why, see
+        :meth:`~gridsim.robot.Robot.comm_criteria`.
 
         Parameters
         ----------
         msg : Message
             Received message from another robot
-        dist : float
-            Distance of the sending robot from this robot
+        dist_sqr : float
+            Squared distance of the sending robot from this robot
         """
         pass
 

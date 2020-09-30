@@ -87,19 +87,19 @@ class GridRobot(Robot):
         # else STAY, which keeps current position
         return x, y
 
-    def comm_criteria(self, dist: int) -> bool:
+    def comm_criteria(self, dist_sqr: int) -> bool:
         """
         Robots can communicate if their Euclidean distance is <= the radius specified at
         initialization (by default, 5 cells)
 
         Parameters
         ----------
-        dist : int
-            Euclidean distance of the other robot with which to communicate
+        dist_sqr : int
+            Squared Euclidean distance of the other robot with which to communicate
 
         Returns
         -------
         bool
             Whether distance is <= the communication radius
         """
-        return dist <= self._comm_range
+        return dist_sqr <= self._comm_range**2

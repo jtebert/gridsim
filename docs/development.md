@@ -57,3 +57,35 @@ Upload it to the actual index:
 python3 -m twine upload dist/*
 ```
 
+## Profiling code
+
+Use the packages [cProfile](https://docs.python.org/2/library/profile.html) and [cprofilev](https://github.com/ymichael/cprofilev) to profile Python code. This is useful for finding slow spots in the simulator itself, as well as your own user code.
+
+Note that these are not included as dependencies for Gridsim, so you will have to install them yourself:
+
+```shell
+pip install cprofilev
+```
+
+### Option 1: Using just `cprofilev`
+
+Run your code and profile it at the same time.
+
+```shell
+python -m cprofilev main.py test_config.yml
+```
+
+### Option 1: Using `cProfile` and `cprofilev`
+
+This saves the output as a file, so you can go back and view it later without having to re-run the code.
+
+1. Run your script and save the output to a log file. For example:
+   ```shell
+   python -m cProfile -o out_log  main.py test_config.yml
+   ```
+2. View the output:
+   ```shell
+   cprofilev -f out_log
+   ```
+   And go to [localhost:4000](http://localhost:4000) to view the output
+
