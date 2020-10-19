@@ -24,6 +24,7 @@ Added
 - When logging parameters with :meth:`~gridsim.logger.Logger.log_param`, you can now specify a subgroup of ``params`` in which to save the data.
 - :class:`~gridsim.message.Message` now has a method :meth:`~gridsim.message.Message.set_all` to replace the whole contents of the Message without creating a new message. (And as opposed to setting the contents key-by-key with :meth:`~gridsim.message.Message.set_all`.)
 - Documentation for profiling code (under Development)
+- Option in Viewer initialization to draw time as text within window
 
 Changed
 -------

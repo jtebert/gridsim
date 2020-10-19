@@ -35,21 +35,31 @@ class Viewer:
         cell, so keep this low to be able to interpret what's going on.
     show_grid : bool, optional
         Whether to show the underlying grid in the World, by default False.
+    show_time : bool, optional
+        Whether to draw the time (ticks) as text within the viewer window, by default False. (It is
+        placed in the upper right corner.)
     """
 
     def __init__(self, world: World, window_width: int = 1080,
-                 display_rate: int = 10, show_grid: bool = False):
+                 display_rate: int = 10, show_grid: bool = False, show_time: bool = False):
 
         self._world = world
         self._clock = pygame.time.Clock()
         self._tick_rate = display_rate
         self._show_grid = show_grid
+        self._show_time = show_time
 
         self._world_dim = world.get_dimensions()
         # Note: there is no guarantee that cell_size is an integer number of pixels
         self._cell_size = window_width / self._world_dim[0]
         self._window_dim = (window_width,
                             int(self._cell_size * self._world_dim[1]))
+
+        if self._show_time:
+            pygame.font.init()
+            self._font = pygame.font.SysFont(None, 48)
+        else:
+            self._font = None
 
         # This allows setting an environment variable to avoid drawing stuff
         # when no display is set up (e.g., Travis CI)
@@ -63,7 +73,7 @@ class Viewer:
     def _update_bg(self):
         """
         Draw a background image for the Viewer (with the World's environment, possibly with a grid)
-        onto the Screen
+        onto the Screen.
         """
         if self._world.has_new_environment():
             self._world.get_environment().add_to_viewer(self._window_dim)
@@ -108,15 +118,21 @@ class Viewer:
         World.
         """
         if self._has_screen:
+            time_text = str(self._world.get_time())
             # Set the window title
             pygame.display.set_caption(
-                f'Gridsim (t={self._world.get_time()})')
+                f'Gridsim (t={time_text})')
 
             # If the world has a new environment, change the viewer background
             self._update_bg()
             # Clear everything by drawing the background
             self._screen.blit(self._bg, (0, 0))
             self._draw_tagged_cells()
+
+            # Draw the time, if set
+            if self._show_time:
+                time_surf = self._font.render(time_text, True, (0, 0, 0))
+                self._screen.blit(time_surf, (self._window_dim[0]-128, 16))
 
             # Draw all the robots
             # Overrides sprite.Group.draw() method (see pygame source code)
