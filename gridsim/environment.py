@@ -98,7 +98,10 @@ class ImageEnvironment(Environment):
         # Get the scaling between image dimensions and grid world dimensions
         img = Image.open(self._img_filename).convert('RGB')
         self._world_dim = grid_dim
-        self._world_img = img.resize(grid_dim, Image.NEAREST)
+        if img.size == grid_dim:
+            self._world_img = img
+        else:
+            self._world_img = img.resize(grid_dim, Image.LANCZOS)
 
         self._observation_std = observation_std
 

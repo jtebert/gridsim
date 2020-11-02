@@ -130,9 +130,9 @@ class Robot(ABC, pygame.sprite.Sprite):
         """
         self._cell_size = cell_size
         self.image = pygame.Surface([cell_size, cell_size], pygame.SRCALPHA)
-        r = int(cell_size/2)
+        radius = int(cell_size/2)
         pygame.draw.circle(self.image, self._color,
-                           (r, r), r)
+                           (int(cell_size/2), int(cell_size/2)), radius)
 
         self.rect = self.image.get_rect()
         self.rect.topleft = (self._x*cell_size, self._y*cell_size)
@@ -143,16 +143,20 @@ class Robot(ABC, pygame.sprite.Sprite):
         Run the robot's controller, move the robot, and (if Viewer is being
         used), update the Sprite information.
 
+        This operates in the order: controller -> move. This means operations
+        will occur at the starting position, THEN the robot will move.
+
         (The update() function comes from the Sprite class.)
         """
+
+        # Run the robot's loop function (includes setting move commands)
+        self._controller()
 
         # Update position/color for viewer
         if self.is_sprite_setup:
             self.rect.topleft = (self._x*self._cell_size,
                                  self._y*self._cell_size)
 
-        # Run the robot's loop function (includes setting move commands)
-        self._controller()
         # Call the platform-specific movement operation
         new_pos = self.move()
         # Actually change the robot's position (or don't) based on collisions
@@ -363,7 +367,7 @@ class Robot(ABC, pygame.sprite.Sprite):
     @abstractmethod
     def comm_criteria(self, dist_sqr: int) -> bool:
         """
-        Criterion for whether message can be communicated (base on distance).
+        Criterion for whether messages can be communicated (based on distance).
 
         Note
         ----
@@ -371,6 +375,12 @@ class Robot(ABC, pygame.sprite.Sprite):
         computationally expensive to compute. If you need to take the square root, you can do so
         here, but because this function is called so much, it will be slow. Instead, consider
         comparing to the squared communication range.
+
+        Note
+        ----
+        For simplicity and speed, communication criterion is assumed to be symmetric; therefore,
+        this should return the same value regardless of whether this is called by the sending or
+        receiving robot.
 
         Parameters
         ----------

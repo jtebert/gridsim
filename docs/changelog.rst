@@ -25,6 +25,7 @@ Added
 - :class:`~gridsim.message.Message` now has a method :meth:`~gridsim.message.Message.set_all` to replace the whole contents of the Message without creating a new message. (And as opposed to setting the contents key-by-key with :meth:`~gridsim.message.Message.set_all`.)
 - Documentation for profiling code (under Development)
 - Option in Viewer initialization to draw time as text within window
+- Option in Viewer initialization to draw the communication network between robots
 
 Changed
 -------
@@ -32,6 +33,7 @@ Changed
 - :meth:`~gridsim.robot.Robot.comm_criteria` and :meth:`~gridsim.robot.Robot.receive_msg` now have an argument of `dist_sqr` instead of `dist`. This is because the square root call in computing the distance is computationally expensive and is called for communication (an N^2) operation.
 - For :meth:`~gridsim.world.World.tag`, you can now pass ``None`` instead of a color to remove an existing tag.
 - [Under the hood] Convert World tagging to use 3D numpy array instead of list of Tuples. This also improves drawing speed ( it doesn't slow down so much when more tags are added), and you don't get gaps between tagged cells for certain window sizes.
+- Improve interpolation for resized environment images
 - Improved code documentation.
 
   - Add documentation of errors and warnings
@@ -43,6 +45,7 @@ Fixed
 
 - You can now no longer :meth:`~gridsim.world.World.tag` cells that are outside of the World dimensions.
 - An error is raised when trying to create a :class:`~gridsim.logger.Logger` aggregator (with :meth:`~gridsim.logger.Logger.add_aggregator`) using a reserved name (e.g., ``params`` or ``time``).
+- Fix Viewer bug that didn't correctly display background color underneath Robots
 
 `0.4 <https://github.com/jtebert/gridsim/releases/tag/v0.4>`_ (2020-08-20)
 ==========================================================================

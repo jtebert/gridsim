@@ -35,18 +35,23 @@ class Viewer:
         cell, so keep this low to be able to interpret what's going on.
     show_grid : bool, optional
         Whether to show the underlying grid in the World, by default False.
+    show_network : bool, optional
+        Whether to visualize the current communication network of the robots, by default False.
+        Communication connections between robots are shown as lines between robots.
     show_time : bool, optional
         Whether to draw the time (ticks) as text within the viewer window, by default False. (It is
         placed in the upper right corner.)
     """
 
-    def __init__(self, world: World, window_width: int = 1080,
-                 display_rate: int = 10, show_grid: bool = False, show_time: bool = False):
+    def __init__(self, world: World, window_width: int = 1080, display_rate: int = 10,
+                 show_grid: bool = False, show_network: bool = False,
+                 show_time: bool = False):
 
         self._world = world
         self._clock = pygame.time.Clock()
         self._tick_rate = display_rate
         self._show_grid = show_grid
+        self._show_network = show_network
         self._show_time = show_time
 
         self._world_dim = world.get_dimensions()
@@ -110,6 +115,18 @@ class Viewer:
         # Draw it
         self._screen.blit(img, (0, 0))
 
+    def _draw_network(self):
+        """
+        Generate a visualization of what robots are communicating with what other robots
+        """
+        robot_edge_inds = self._world._viewer_comm_edges
+        for tx_r, rx_r, in robot_edge_inds:
+            tx_pos = tx_r.rect.center
+            rx_pos = rx_r.rect.center
+            if tx_pos != rx_pos:
+                pygame.draw.line(self._screen, (0, 0, 0), tx_pos, rx_pos)
+            # pygame.gfxdraw.line(self._screen, rx_pos[0], rx_pos[1], tx_pos[0], tx_pos[1], (0, 0, 0))
+
     def draw(self):
         """
         Draw all of the robots in the World into the World and its environment.
@@ -129,6 +146,10 @@ class Viewer:
             self._screen.blit(self._bg, (0, 0))
             self._draw_tagged_cells()
 
+            # Draw the communication network, if enabled
+            if self._show_network:
+                self._draw_network()
+
             # Draw the time, if set
             if self._show_time:
                 time_surf = self._font.render(time_text, True, (0, 0, 0))
@@ -138,11 +159,11 @@ class Viewer:
             # Overrides sprite.Group.draw() method (see pygame source code)
             robots = self._world.get_robots()
             sprites = robots.sprites()
-            surface_blit = self._screen.blit
+            # robots.draw(self._screen)
             for spr in sprites:
                 if not spr.is_sprite_setup:
                     spr._sprite_setup(self._cell_size)
-                robots.spritedict[spr] = surface_blit(spr.image, spr.rect)
+                robots.spritedict[spr] = self._screen.blit(spr.image, spr.rect)
             self.lostsprites = []
 
             # Update the display

@@ -73,6 +73,10 @@ class World:
 
         [self.add_robot(r) for r in robots]
 
+        # self._communicate will modify a list of robot indices that the viewer will use to draw
+        # lines between robots to visualize the communication network
+        self._viewer_comm_edges: List[Tuple[pygame.sprite.Sprite]] = []
+
     def step(self):
         """
         Run a single step of the simulation. This moves the robots, manages the clock, and runs the
@@ -150,20 +154,28 @@ class World:
         This checks that the receiving robots are of the right type (specified by the Mesage), and
         that robots are within mutual communication range of each other.
         """
-        # (Slow) loop through all robot pairs
-        for tx_r in self._robots:  # transmitting robot
+        # Clear the list of edges that the Viewer will draw
+        self._viewer_comm_edges = []
+        # (SLOW) loop through all robot pairs
+        for tx_ind, tx_r in enumerate(self._robots):  # transmitting robot
             msg = tx_r.get_tx_message()
             if msg:  # only transmit non-empty messages
-                for rx_r in self._robots:  # receiving robot
+                for rx_ind, rx_r in enumerate(self._robots):  # receiving robot
                     # Receiver must be target type (and not itself)
                     if tx_r != rx_r and isinstance(rx_r, msg._rx_type):
                         dist_sqr = tx_r._distance_sqr(rx_r.get_pos())
-                        # dist = tx_r.distance(rx_r.get_pos())
-                        if tx_r.comm_criteria(dist_sqr) and rx_r.comm_criteria(dist_sqr):
+                        # NOTE: This was changed after v0.5 to assume that communication (and
+                        # therefore comm_criteria()) is symmetric because it speeds up simulations
+                        if tx_r.comm_criteria(dist_sqr):
                             # Receiving robot processes incoming message
                             rx_r.receive_msg(msg, dist_sqr)
                             # Tell sender that the message was received
                             tx_r.msg_received()
+                            # Add this to the list of links/edges to draw if the Viewer is showing
+                            # the communication network
+                            if tx_ind < rx_ind:
+                                # (This makes sure each of the edge pairs is only drawn once)
+                                self._viewer_comm_edges.append((tx_r, rx_r))
 
     def get_dimensions(self) -> Tuple[int, int]:
         """
